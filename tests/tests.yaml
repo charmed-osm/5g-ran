@@ -1,0 +1,6 @@
+gate_bundles:
+  - bundle
+smoke_bundles:
+  - bundle
+tests:
+  - tests.basic_deployment.BasicDeployment

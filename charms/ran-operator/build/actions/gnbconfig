@@ -1,0 +1,66 @@
+#!/bin/sh
+
+mcc=`action-get mcc`
+mnc=`action-get mnc`
+gnbid=`action-get gnbid`
+tac=`action-get tac`
+supportmcc=`action-get supportmcc`
+supportmnc=`action-get supportmnc`
+sst=`action-get sst`
+sd=`action-get sd`
+paging=`action-get paging`
+gnbname=`action-get gnbname`
+amfip=`action-get amfip`
+amfport=`action-get amfport`
+gnbport=`action-get gnbport`
+ngapinterface=`action-get ngapinterface`
+upfip=`action-get upfip`
+dbip=`action-get dbip`
+dbport=`action-get dbport`
+dbname=`action-get dbname`
+
+
+curl --location --request POST 'http://localhost:8081/configread' \
+--header 'Content-Type: application/json' \
+--header 'cart-id: 9' \
+--data-raw "{
+	\"Global\":{
+		\"mcc\":\"$mcc\",
+		\"mnc\":\"$mnc\",
+		\"gnbid\":\"$gnbid\"
+	},
+	\"supportlist\":[
+		{
+			\"tac\":\"$tac\",
+			\"broadplmnlist\":[
+				{
+					\"mcc\":\"$supportmcc\",
+					\"mnc\":\"$supportmnc\",
+					\"slicesupport\":[
+						{
+							\"sst\":\"$sst\",
+							\"sd\":\"$sd\"
+						}
+					]
+				}
+			]
+		}
+	],
+	\"paging\":\"$paging\",
+	\"gnbname\":\"$gnbname\",
+	\"amfconfig\":{
+		\"amfip\" : \"$amfip\",
+		\"amfport\" : \"$amfport\",
+		\"gnbport\" : \"$gnbport\",
+		\"ngapinterface\" : \"$ngapinterface\"
+	},
+        \"upfconfig\":{
+                \"upfip\" : \"$upfip\"
+        },
+	\"dbconfig\":{
+                \"dbip\" : \"$dbip\",
+                \"dbport\" : \"$dbport\",
+                \"dbname\" : \"$dbname\"
+        }
+}
+"

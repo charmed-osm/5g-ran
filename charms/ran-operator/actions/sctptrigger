@@ -1,0 +1,6 @@
+#!/bin/sh
+
+curl --location --request POST 'http://localhost:8081/sctpconnect' \
+--header 'Content-Type: application/json' \
+--header 'cart-id: 9' \
+--data-raw ''
