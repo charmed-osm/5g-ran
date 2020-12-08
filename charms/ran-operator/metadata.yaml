@@ -11,7 +11,7 @@ description: |
     Attach Procedure is done through RestAPI call.
     UE configurations are updated through Day2 action
 tags:
-    - misc
+    - 5g-ran
 series:
     - kubernetes
 min-juju-version: 2.8.2

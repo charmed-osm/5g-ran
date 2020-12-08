@@ -8,7 +8,7 @@ description: |
     Data traffic is generated in UE pod and send to/received from the
     CORE through RAN pod.
 tags:
-    - misc
+    - ue
 series:
     - kubernetes
 resources:

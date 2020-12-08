@@ -12,23 +12,23 @@ class TestPodSpec(unittest.TestCase):
 
     def test_make_pod_ports(self) -> NoReturn:
         """Testing make pod ports."""
-        port = 9999
-        port1 = 8888
+        sctp_port = 9999
+        rest_port = 8888
         expected_result = [
             {
                 "name": "ranport",
-                "containerPort": port,
+                "containerPort": sctp_port,
                 "protocol": "TCP",
             },
             {
                 "name": "ranport2",
-                "containerPort": port1,
+                "containerPort": rest_port,
                 "protocol": "TCP",
             },
         ]
         portdict = {
-            "port1": 9999,
-            "port3": 8888,
+            "sctp_port": 9999,
+            "rest_port": 8888,
         }
         pod_ports = pod_spec._make_pod_ports(portdict)
         self.assertListEqual(expected_result, pod_ports)
@@ -138,7 +138,7 @@ class TestPodSpec(unittest.TestCase):
             }
         ]
         portdict1 = {
-            "port2": 8888,
+            "gtp_port": 8888,
         }
         # test = "udpnew-lb"
         pod_services = pod_spec._make_pod_services(portdict1, appname)
@@ -148,9 +148,9 @@ class TestPodSpec(unittest.TestCase):
         """Testing make pod spec"""
         image_info = {"upstream-source": "10.45.5.100:4200/canonical/ran:v25.0"}
         config = {
-            "port1": 9999,
-            "port2": 8888,
-            "port3": 7777,
+            "sctp_port": 9999,
+            "gtp_port": 8888,
+            "rest_port": 7777,
         }
         model_name = "ran"
         app_name = "udpnew"

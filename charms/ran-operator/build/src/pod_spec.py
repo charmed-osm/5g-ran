@@ -12,16 +12,16 @@ logger = logging.getLogger(__name__)
 class ConfigData(BaseModel):
     """Configuration data model."""
 
-    port1: PositiveInt
-    port2: int
+    sctp_port: PositiveInt
+    gtp_port: int
 
-    @validator("port2")
+    @validator("gtp_port")
     def validate_port(cls, value: int) -> Any:
         if value == 2152:  # <- Here is condition checking your format.
             return value
         raise ValueError("Invalid port number")
 
-    port3: int
+    rest_port: int
 
 
 def _make_pod_ports(config: ConfigData) -> List[Dict[str, Any]]:
@@ -32,8 +32,8 @@ def _make_pod_ports(config: ConfigData) -> List[Dict[str, Any]]:
         List[Dict[str, Any]]: pod port details.
     """
     return [
-        {"name": "ranport", "containerPort": config["port1"], "protocol": "TCP"},
-        {"name": "ranport2", "containerPort": config["port3"], "protocol": "TCP"},
+        {"name": "ranport", "containerPort": config["sctp_port"], "protocol": "TCP"},
+        {"name": "ranport2", "containerPort": config["rest_port"], "protocol": "TCP"},
     ]
 
 
@@ -139,8 +139,8 @@ def _make_pod_services(config: ConfigData, app_name: str):
                 "ports": [
                     {
                         "protocol": "UDP",
-                        "port": config["port2"],
-                        "targetPort": config["port2"],
+                        "port": config["gtp_port"],
+                        "targetPort": config["gtp_port"],
                     }
                 ],
                 "type": "LoadBalancer",

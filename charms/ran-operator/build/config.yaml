@@ -4,15 +4,15 @@
 # This is only an example, and you should edit to suit your needs.
 # If you don't need config, you can remove the file entirely.
 options:
-    port1:
+    sctp_port:
         type: int
         description: 'Port'
         default: 9487
-    port2:
+    gtp_port:
         type: int
         description: 'Port'
         default: 2152
-    port3:
+    rest_port:
         type: int
         description: 'Port'
         default: 8081
