@@ -1,30 +1,26 @@
 #!/usr/bin/env python3model = model_name()
 # Copyright 2020 Tata Elxsi canonical@tataelxsi.onmicrosoft.com
 # See LICENSE file for licensing details.
+"""ue operator pod_spec"""
 
 import logging
-from pydantic import BaseModel, PositiveInt
 from typing import Any, Dict, List
 
 logger = logging.getLogger(__name__)
 
 
-class ConfigData(BaseModel):
-    """Configuration data model."""
-
-    port: PositiveInt
-
-
-def _make_pod_ports(config: ConfigData) -> Dict[str, Any]:
+def _make_pod_ports(config: Dict[str, Any]) -> Dict[str, Any]:
     """Generate pod ports details.
     Args:
         port (int): port to expose.
     Returns:
         List[Dict[str, Any]]: pod port details.
     """
-    return [
-        {"name": "ueport", "containerPort": config["port"], "protocol": "TCP"},
-    ]
+    if config["ssh_port"] == 22:
+        return [
+            {"name": "ueport", "containerPort": config["ssh_port"], "protocol": "TCP"},
+        ]
+    raise ValueError("Invalid ssh_port number")
 
 
 def _make_pod_privilege() -> Dict[str, Any]:
@@ -56,7 +52,8 @@ def _make_pod_command() -> List:
 def _make_pod_podannotations() -> Dict[str, Any]:
     annot = {
         "annotations": {
-            "k8s.v1.cni.cncf.io/networks": '[\n{\n"name" : "internet-network",\n"interface": "eth1",\n"ips": ["60.60.0.114"]\n}\n]' # noqa
+            # pylint:disable=line-too-long
+            "k8s.v1.cni.cncf.io/networks": '[\n{\n"name" : "internet-network",\n"interface": "eth1",\n"ips": ["60.60.0.114"]\n}\n]'  # noqa
         }
     }
 
@@ -65,8 +62,7 @@ def _make_pod_podannotations() -> Dict[str, Any]:
 
 def make_pod_spec(
     image_info: Dict[str, str],
-    config: Dict[str, Any],
-    # relation_state: Dict[str, Any],
+    config: Dict[str, str],
     app_name: str,
 ) -> Dict[str, Any]:
     """Generate the pod spec information.
@@ -82,8 +78,6 @@ def make_pod_spec(
     """
     if not image_info:
         return None
-
-    ConfigData(**(config))
 
     ports = _make_pod_ports(config)
     cmd = _make_pod_command()

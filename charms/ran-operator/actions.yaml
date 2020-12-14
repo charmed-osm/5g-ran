@@ -1,6 +1,8 @@
-sctptrigger:
-    description: "connection establishment"
-gnbconfig:
+---
+connect-amf:
+    description: "connection establishment between ran and
+                  amf component of core"
+config-gnb:
     description: "gNB Config Read"
     params:
         mcc:
@@ -75,7 +77,7 @@ gnbconfig:
             description: "dbname"
             type: string
             default: "free5gc"
-ueconfig:
+config-ue:
     description: "UE configuration read"
     params:
         msin:
@@ -98,60 +100,35 @@ ueconfig:
             description: "protectionscheme"
             type: string
             default: ""
-        k: 
+        k:
             description: "k"
             type: integer
             default: 5463
-        opc: 
+        opc:
             description: "opc"
             type: integer
             default: 451011
-        uemgmtip: 
+        uemgmtip:
             description: "uemgmtip"
             type: string
             default: "10.1.135.26"
-        pdusessionid1: 
+        pdusessionid1:
             description: "pdusessionid1"
             type: integer
             default: 1
-        datanetworkname1: 
-             description: "datanetworkname1"
-             type: string
-             default: "internet"
-        uepdumacaddress1: 
-             description: "uePDUMacAddress1"
-             type: string
-             default: "7a:8a:fd:c7:85:8a"
-        sst1: 
-             description: "sst1"
-             type: integer
-             default: 1
-        sd1: 
-             description: "sd1"
-             type: string
-             default: "010203"
-
-pdusession:
-    description: "pdusession configuration read"
-    params:
-        pdusessionid:
-             description: "pdusessionid"
-             type: integer
-             default: 2
-        datanetworkname:
-             description: "datanetworkname"
-             type: string
-             default: "ims"
-        uepdumacaddress:
-             description: "uePDUMacAddress"
-             type: string
-             default: "fa:16:3e:9d:98:b7"
-        sst:
-             description: "sst"
-             type: integer
-             default: "2"
-        sd:
-             description: "sd2"
-             type: string
-             default: "040506"
-
+        datanetworkname1:
+            description: "datanetworkname1"
+            type: string
+            default: "internet"
+        uepdumacaddress1:
+            description: "uePDUMacAddress1"
+            type: string
+            default: "7a:8a:fd:c7:85:8a"
+        sst1:
+            description: "sst1"
+            type: integer
+            default: 1
+        sd1:
+            description: "sd1"
+            type: string
+            default: "010203"

@@ -6,9 +6,8 @@
 """Operator Charm main library."""
 # Load modules from lib directory
 import logging
-from pydantic import ValidationError
-from oci_image import OCIImageResource, OCIImageResourceError
 from typing import NoReturn
+from oci_image import OCIImageResource, OCIImageResourceError
 
 # import setuppath  # noqa:F401
 from ops.charm import CharmBase
@@ -23,8 +22,6 @@ logger = logging.getLogger(__name__)
 
 class ConfigurePodEvent(EventBase):
     """Configure Pod event"""
-
-    pass
 
 
 class UeCharm(CharmBase):
@@ -63,7 +60,7 @@ class UeCharm(CharmBase):
             event (EventBase): Hook or Relation event that started the
                                function.
         """
-
+        logging.info(event)
         if not self.unit.is_leader():
             self.unit.status = ActiveStatus("ready")
             return
@@ -81,14 +78,14 @@ class UeCharm(CharmBase):
         try:
             pod_spec = make_pod_spec(
                 image_info,
-                self.config,
-                # self.relation_state,
+                self.model.config,
                 self.model.app.name,
             )
-        except ValidationError as exc:
-            logger.exception("Config/Relation data validation error")
+        except ValueError as exc:
+            logger.exception("Config data validation error")
             self.unit.status = BlockedStatus(str(exc))
             return
+
         if self.state.pod_spec != pod_spec:
             self.model.pod.set_spec(pod_spec)
             self.state.pod_spec = pod_spec

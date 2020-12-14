@@ -1,5 +1,6 @@
 # Copyright 2020 Tata Elxsi canonical@tataelxsi.onmicrosoft.com
 # See LICENSE file for licensing details.
+---
 name: ran
 summary: Ran deploys the RAN as a microk8s pod
 maintainers:
@@ -19,7 +20,7 @@ deployment:
     type: stateless
     service: loadbalancer
 resources:
-  image:
-    type: oci-image
-    description: docker image for RAN
-    upstream-source: "10.45.5.100:4200/canonical/ran:v30.0"
+    image:
+        type: oci-image
+        description: docker image for RAN
+        upstream-source: "localhost:32000/ran:1.0"

@@ -1,40 +1,36 @@
 #!/usr/bin/env python3model = model_name()
 # Copyright 2020 Tata Elxsi canonical@tataelxsi.onmicrosoft.com
 # See LICENSE file for licensing details.
+"""ran operator pod_spec"""
 
 import logging
-from pydantic import BaseModel, validator, PositiveInt
 from typing import Any, Dict, List
 
 logger = logging.getLogger(__name__)
 
 
-class ConfigData(BaseModel):
-    """Configuration data model."""
-
-    sctp_port: PositiveInt
-    gtp_port: int
-
-    @validator("gtp_port")
-    def validate_port(cls, value: int) -> Any:
-        if value == 2152:  # <- Here is condition checking your format.
-            return value
-        raise ValueError("Invalid port number")
-
-    rest_port: int
+GTP_PORT = 2152
+REST_PORT = 8081
 
 
-def _make_pod_ports(config: ConfigData) -> List[Dict[str, Any]]:
+def _make_pod_ports(config: Dict[str, Any]) -> List[Dict[str, Any]]:
     """Generate pod ports details.
     Args:
         port (int): port to expose.
     Returns:
         List[Dict[str, Any]]: pod port details.
     """
-    return [
-        {"name": "ranport", "containerPort": config["sctp_port"], "protocol": "TCP"},
-        {"name": "ranport2", "containerPort": config["rest_port"], "protocol": "TCP"},
-    ]
+    if config["sctp_port"] > 0:
+        return [
+            {
+                "name": "ranport",
+                "containerPort": config["sctp_port"],
+                "protocol": "TCP",
+            },
+            {"name": "ranport2", "containerPort": REST_PORT, "protocol": "TCP"},
+        ]
+# else:
+    raise ValueError("Invalid sctp port number")
 
 
 def _make_pod_envconfig(model_name: str) -> Dict[str, Any]:
@@ -110,6 +106,7 @@ def _make_pod_resource() -> Dict[str, Any]:
                 "apiVersion": "k8s.cni.cncf.io/v1",
                 "kind": "NetworkAttachmentDefinition",
                 "metadata": {"name": "internet-network"},
+                # pylint:disable=line-too-long
                 "spec": {
                     "config": '{\n"cniVersion": "0.3.1",\n"name": "internet-network",\n"type": "macvlan",\n"master": "ens3",\n"mode": "bridge",\n"ipam": {\n"type": "host-local",\n"subnet": "60.60.0.0/16",\n"rangeStart": "60.60.0.50",\n"rangeEnd": "60.60.0.250",\n"gateway": "60.60.0.100"\n}\n}'  # noqa
                 },
@@ -121,15 +118,14 @@ def _make_pod_resource() -> Dict[str, Any]:
 
 
 def _make_pod_podannotations() -> Dict[str, Any]:
-    networks = (
-        '[\n{\n"name" : "internet-network",\n"interface": "eth1",\n"ips": ["60.60.0.150"]\n}\n]'
-    )
+    # pylint:disable=line-too-long
+    networks = '[\n{\n"name" : "internet-network",\n"interface": "eth1",\n"ips": ["60.60.0.150"]\n}\n]'  # noqa
     annot = {"annotations": {"k8s.v1.cni.cncf.io/networks": networks}}
 
     return annot
 
 
-def _make_pod_services(config: ConfigData, app_name: str):
+def _make_pod_services(app_name: str):
     return [
         {
             "name": "udpnew-lb",
@@ -139,8 +135,8 @@ def _make_pod_services(config: ConfigData, app_name: str):
                 "ports": [
                     {
                         "protocol": "UDP",
-                        "port": config["gtp_port"],
-                        "targetPort": config["gtp_port"],
+                        "port": GTP_PORT,
+                        "targetPort": GTP_PORT,
                     }
                 ],
                 "type": "LoadBalancer",
@@ -152,7 +148,6 @@ def _make_pod_services(config: ConfigData, app_name: str):
 def make_pod_spec(
     image_info: Dict[str, str],
     config: Dict[str, Any],
-    # relation_state: Dict[str, Any],
     model_name: str,
     app_name: str,
 ) -> Dict[str, Any]:
@@ -170,8 +165,6 @@ def make_pod_spec(
     if not image_info:
         return None
 
-    ConfigData(**config)
-
     ports = _make_pod_ports(config)
     env_config = _make_pod_envconfig(model_name)
     kubernetes = _make_pod_privilege()
@@ -179,7 +172,7 @@ def make_pod_spec(
     customdef = _make_pod_customresourcedefinition()
     customresource = _make_pod_resource()
     podannotations = _make_pod_podannotations()
-    services = _make_pod_services(config, app_name)
+    services = _make_pod_services(app_name)
     return {
         "version": 3,
         "containers": [

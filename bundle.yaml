@@ -1,13 +1,14 @@
+---
 description: ran Bundle
 bundle: kubernetes
 applications:
   ran:
-    charm: '../charms/ran-operator/ran.charm'
+    charm: './charms/ran-operator/ran.charm'
     scale: 1
     resources:
-      image: '10.45.5.100:4200/canonical/ran:v30.0'
+      image: 'localhost:32000/ran:1.0'
   ue:
-    charm: '../charms/ue-operator/ue.charm'
+    charm: './charms/ue-operator/ue.charm'
     scale: 1
     resources:
-      image: '10.45.5.100:4200/canonical/ue:v4.0'
+      image: 'localhost:32000/ue:1.0'

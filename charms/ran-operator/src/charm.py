@@ -5,11 +5,10 @@
 """Operator Charm main library."""
 # Load modules from lib directory
 import logging
-from pydantic import ValidationError
+from typing import NoReturn
 from oci_image import OCIImageResource, OCIImageResourceError
 
 # from typing import Any, Dict, NoReturn
-from typing import NoReturn
 
 # import setuppath  # noqa:F401
 from ops.charm import CharmBase
@@ -18,15 +17,6 @@ from ops.main import main
 from ops.model import BlockedStatus, ActiveStatus, MaintenanceStatus
 from pod_spec import make_pod_spec
 
-"""from charmhelpers.core.hookenv import (
-    relation_ids,
-    related_units,
-    relation_get,
-    unit_get,
-    network_get,
-    relation_id,
-    model_name,
-)"""
 
 logger = logging.getLogger(__name__)
 
@@ -34,10 +24,9 @@ logger = logging.getLogger(__name__)
 class ConfigurePodEvent(EventBase):
     """Configure Pod event"""
 
-    pass
-
 
 class RanCharm(CharmBase):
+    """Ran Charm"""
     state = StoredState()
 
     def __init__(self, *args) -> NoReturn:
@@ -71,7 +60,7 @@ class RanCharm(CharmBase):
             event (EventBase): Hook or Relation event that started the
                                function.
         """
-
+        logging.info(event)
         if not self.unit.is_leader():
             self.unit.status = ActiveStatus("ready")
             return
@@ -90,12 +79,11 @@ class RanCharm(CharmBase):
             pod_spec = make_pod_spec(
                 image_info,
                 self.config,
-                # self.relation_state,
                 self.model.name,
                 self.model.app.name,
             )
-        except ValidationError as exc:
-            logger.exception("Config/Relation data validation error")
+        except ValueError as exc:
+            logger.exception("Config data validation error")
             self.unit.status = BlockedStatus(str(exc))
             return
 

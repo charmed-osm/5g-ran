@@ -1,16 +1,17 @@
 # Copyright 2020 Tata Elxsi canonical@tataelxsi.onmicrosoft.com
 # See LICENSE file for licensing details.
+"""ran operator tests charms"""
 
 import unittest
 
 from typing import NoReturn
 from ops.testing import Harness
-from charm import RanCharm
-
 from ops.model import BlockedStatus
+from charm import RanCharm
 
 
 class TestCharm(unittest.TestCase):
+    """Test Charm"""
     def setUp(self) -> NoReturn:
         """Test setup"""
         self.harness = Harness(RanCharm)
@@ -82,6 +83,7 @@ class TestCharm(unittest.TestCase):
                             "kind": "NetworkAttachmentDefinition",
                             "metadata": {"name": "internet-network"},
                             "spec": {
+                                # pylint:disable=line-too-long
                                 "config": '{\n"cniVersion": "0.3.1",\n"name": "internet-network",\n"type": "macvlan",\n"master": "ens3",\n"mode": "bridge",\n"ipam": {\n"type": "host-local",\n"subnet": "60.60.0.0/16",\n"rangeStart": "60.60.0.50",\n"rangeEnd": "60.60.0.250",\n"gateway": "60.60.0.100"\n}\n}'  # noqa
                             },
                         }
@@ -89,7 +91,8 @@ class TestCharm(unittest.TestCase):
                 },
                 "pod": {
                     "annotations": {
-                        "k8s.v1.cni.cncf.io/networks": '[\n{\n"name" : "internet-network",\n"interface": "eth1",\n"ips": ["60.60.0.150"]\n}\n]' # noqa
+                        # pylint:disable=line-too-long
+                        "k8s.v1.cni.cncf.io/networks": '[\n{\n"name" : "internet-network",\n"interface": "eth1",\n"ips": ["60.60.0.150"]\n}\n]'  # noqa
                     }
                 },
                 "services": [
@@ -115,7 +118,7 @@ class TestCharm(unittest.TestCase):
         # Verifying status
         self.assertNotIsInstance(self.harness.charm.unit.status, BlockedStatus)
 
-        pod_spec, kubernetesResources = self.harness.get_pod_spec()
+        pod_spec, _ = self.harness.get_pod_spec()
         self.assertDictEqual(expected_result, pod_spec)
 
         # Verifying status message

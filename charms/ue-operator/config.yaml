@@ -3,8 +3,10 @@
 #
 # This is only an example, and you should edit to suit your needs.
 # If you don't need config, you can remove the file entirely.
+---
 options:
-    port:
+    ssh_port:
         type: int
-        description: 'Port'
+        description: 'ssh_port is used for
+                       communication between ran and core'
         default: 22

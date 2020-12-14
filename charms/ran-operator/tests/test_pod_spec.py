@@ -1,7 +1,7 @@
 # Copyright 2020 Tata Elxsi canonical@tataelxsi.onmicrosoft.com
 # See LICENSE file for licensing details.
+"""ran operator tests pod_spec"""
 
-from pydantic import ValidationError
 from typing import NoReturn
 import unittest
 import pod_spec
@@ -13,7 +13,7 @@ class TestPodSpec(unittest.TestCase):
     def test_make_pod_ports(self) -> NoReturn:
         """Testing make pod ports."""
         sctp_port = 9999
-        rest_port = 8888
+        rest_port = 8081
         expected_result = [
             {
                 "name": "ranport",
@@ -28,8 +28,8 @@ class TestPodSpec(unittest.TestCase):
         ]
         portdict = {
             "sctp_port": 9999,
-            "rest_port": 8888,
         }
+        # pylint:disable=W0212
         pod_ports = pod_spec._make_pod_ports(portdict)
         self.assertListEqual(expected_result, pod_ports)
 
@@ -40,7 +40,7 @@ class TestPodSpec(unittest.TestCase):
             "ALLOW_ANONYMOUS_LOGIN": "yes",
             "MODEL": "rantest",
         }
-
+        # pylint:disable=W0212
         pod_envconfig = pod_spec._make_pod_envconfig("rantest")
         self.assertDictEqual(expected_result, pod_envconfig)
 
@@ -49,6 +49,7 @@ class TestPodSpec(unittest.TestCase):
         expected_result = {
             "securityContext": {"privileged": True},
         }
+        # pylint:disable=W0212
         pod_privilege = pod_spec._make_pod_privilege()
         self.assertDictEqual(expected_result, pod_privilege)
 
@@ -68,7 +69,7 @@ class TestPodSpec(unittest.TestCase):
                 }
             ],
         }
-
+        # pylint:disable=W0212
         pod_serviceaccount = pod_spec._make_pod_serviceaccount()
         self.assertDictEqual(expected_result, pod_serviceaccount)
 
@@ -89,6 +90,7 @@ class TestPodSpec(unittest.TestCase):
                 },
             }
         ]
+        # pylint:disable=W0212
         pod_customresourcedefinition = pod_spec._make_pod_customresourcedefinition()
         self.assertListEqual(expected_result, pod_customresourcedefinition)
 
@@ -101,19 +103,22 @@ class TestPodSpec(unittest.TestCase):
                     "kind": "NetworkAttachmentDefinition",
                     "metadata": {"name": "internet-network"},
                     "spec": {
+                        # pylint:disable=line-too-long
                         "config": '{\n"cniVersion": "0.3.1",\n"name": "internet-network",\n"type": "macvlan",\n"master": "ens3",\n"mode": "bridge",\n"ipam": {\n"type": "host-local",\n"subnet": "60.60.0.0/16",\n"rangeStart": "60.60.0.50",\n"rangeEnd": "60.60.0.250",\n"gateway": "60.60.0.100"\n}\n}'  # noqa
                     },
                 }
             ]
         }
+        # pylint:disable=W0212
         pod_resource = pod_spec._make_pod_resource()
         self.assertDictEqual(expected_result, pod_resource)
 
     def test_make_pod_podannotations(self) -> NoReturn:
         """Teting make pod privilege"""
-        networks = '[\n{\n"name" : "internet-network",\n"interface": "eth1",\n"ips": ["60.60.0.150"]\n}\n]' # noqa
+        # pylint:disable=line-too-long
+        networks = '[\n{\n"name" : "internet-network",\n"interface": "eth1",\n"ips": ["60.60.0.150"]\n}\n]'  # noqa
         expected_result = {"annotations": {"k8s.v1.cni.cncf.io/networks": networks}}
-
+        # pylint:disable=W0212
         pod_podannotations = pod_spec._make_pod_podannotations()
         self.assertDictEqual(expected_result, pod_podannotations)
 
@@ -129,33 +134,28 @@ class TestPodSpec(unittest.TestCase):
                     "ports": [
                         {
                             "protocol": "UDP",
-                            "port": 8888,
-                            "targetPort": 8888,
+                            "port": 2152,
+                            "targetPort": 2152,
                         }
                     ],
                     "type": "LoadBalancer",
                 },
             }
         ]
-        portdict1 = {
-            "gtp_port": 8888,
-        }
-        # test = "udpnew-lb"
-        pod_services = pod_spec._make_pod_services(portdict1, appname)
+        # pylint:disable=W0212
+        pod_services = pod_spec._make_pod_services(appname)
         self.assertEqual(expected_result, pod_services)
 
     def test_make_pod_spec(self) -> NoReturn:
         """Testing make pod spec"""
-        image_info = {"upstream-source": "10.45.5.100:4200/canonical/ran:v25.0"}
+        image_info = {"upstream-source": "localhost:32000/ran:1.0"}
         config = {
-            "sctp_port": 9999,
-            "gtp_port": 8888,
-            "rest_port": 7777,
+            "sctp_port": -9999,
         }
         model_name = "ran"
         app_name = "udpnew"
 
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValueError):
             pod_spec.make_pod_spec(image_info, config, model_name, app_name)
 
 
