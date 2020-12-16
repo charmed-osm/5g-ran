@@ -1,5 +1,5 @@
 ---
-description: ran Bundle
+description: ran Bundle for Functional Testing
 bundle: kubernetes
 applications:
   ran:

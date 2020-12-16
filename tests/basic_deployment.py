@@ -13,6 +13,7 @@ import zaza.model as model
 
 class BasicDeployment(unittest.TestCase):
     """ class defines functional testing of ran charms """
+
     def test_upfgtp_connection(self):
         """ ***** checking gtp connection in ran ***** """
         ran_gtp_port = 2152
