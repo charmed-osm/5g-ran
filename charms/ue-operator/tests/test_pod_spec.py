@@ -67,9 +67,7 @@ class TestPodSpec(unittest.TestCase):
     def test_make_pod_podannotations(self) -> NoReturn:
         """Teting make pod privilege"""
         # pylint:disable=line-too-long
-        networks = [
-            {"name": "internet-network", "interface": "eth1", "ips": ["60.60.0.114"]}
-        ]  # noqa
+        networks = '[\n{\n"name" : "internet-network",\n"interface": "eth1",\n"ips": ["60.60.0.114"]\n}\n]' # noqa
         expected_result = {"annotations": {"k8s.v1.cni.cncf.io/networks": networks}}
         # pylint:disable=W0212
         pod_podannotations = pod_spec._make_pod_podannotations()
