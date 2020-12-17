@@ -71,13 +71,7 @@ def _make_pod_podannotations() -> Dict[str, Any]:
     annot = {
         "annotations": {
             # pylint:disable=line-too-long
-            "k8s.v1.cni.cncf.io/networks": [
-                {
-                    "name": "internet-network",
-                    "interface": "eth1",
-                    "ips": ["60.60.0.114"],
-                }
-            ]  # noqa
+            "k8s.v1.cni.cncf.io/networks": '[\n{\n"name" : "internet-network",\n"interface": "eth1",\n"ips": ["60.60.0.114"]\n}\n]'  # noqa
         }
     }
 

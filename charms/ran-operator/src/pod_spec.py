@@ -126,20 +126,7 @@ def _make_pod_resource() -> Dict[str, Any]:
                 "metadata": {"name": "internet-network"},
                 # pylint:disable=line-too-long
                 "spec": {
-                    "config": {
-                        "cniVersion": "0.3.1",
-                        "name": "internet-network",
-                        "type": "macvlan",
-                        "master": "ens3",
-                        "mode": "bridge",
-                        "ipam": {
-                            "type": "host-local",
-                            "subnet": "60.60.0.0/16",
-                            "rangeStart": "60.60.0.50",
-                            "rangeEnd": "60.60.0.250",
-                            "gateway": "60.60.0.100",
-                        },
-                    },  # noqa
+                    "config": '{\n"cniVersion": "0.3.1",\n"name": "internet-network",\n"type": "macvlan",\n"master": "ens3",\n"mode": "bridge",\n"ipam": {\n"type": "host-local",\n"subnet": "60.60.0.0/16",\n"rangeStart": "60.60.0.50",\n"rangeEnd": "60.60.0.250",\n"gateway": "60.60.0.100"\n}\n}'  # noqa
                 },
             }
         ]
@@ -150,9 +137,7 @@ def _make_pod_resource() -> Dict[str, Any]:
 
 def _make_pod_podannotations() -> Dict[str, Any]:
     # pylint:disable=line-too-long
-    networks = [
-        {"name": "internet-network", "interface": "eth1", "ips": ["60.60.0.150"]}
-    ]  # noqa
+    networks = '[\n{\n"name" : "internet-network",\n"interface": "eth1",\n"ips": ["60.60.0.150"]\n}\n]'  # noqa
     annot = {"annotations": {"k8s.v1.cni.cncf.io/networks": networks}}
 
     return annot
