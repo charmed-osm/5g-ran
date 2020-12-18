@@ -26,6 +26,10 @@ Charm to deploy RAN application
 
 ## Usage
 
+> This does not explain how to use it. Add similar steps to the ones in the main readme.
+ - How to deploy it from the store
+ - How to deploy it locally.
+
 For data transfer, Exposed an UDP Port 2152
 To integrate with core, Exposed port 8081 for Rest server
 

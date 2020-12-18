@@ -47,8 +47,6 @@ def _make_pod_ports(config: Dict[str, Any]) -> List[Dict[str, Any]]:
             },
             {"name": "ranport2", "containerPort": REST_PORT, "protocol": "TCP"},
         ]
-    # else:
-    raise ValueError("Invalid sctp port number")
 
 
 def _make_pod_envconfig(model_name: str) -> Dict[str, Any]:
@@ -134,10 +132,10 @@ def _make_pod_resource() -> Dict[str, Any]:
                         "mode": "bridge",
                         "ipam": {
                             "type": "host-local",
-                            "subnet": "60.60.0.0/16",
-                            "rangeStart": "60.60.0.50",
-                            "rangeEnd": "60.60.0.250",
-                            "gateway": "60.60.0.100",
+                            "subnet": "60.60.0.0/16", # HARD-CODED IP? WHY? REMOVE IF POSSIBLE.
+                            "rangeStart": "60.60.0.50", # HARD-CODED IP? WHY? REMOVE IF POSSIBLE.
+                            "rangeEnd": "60.60.0.250", # HARD-CODED IP? WHY? REMOVE IF POSSIBLE.
+                            "gateway": "60.60.0.100", # HARD-CODED IP? WHY? REMOVE IF POSSIBLE.
                         },
                     },  # noqa
                 },
@@ -151,7 +149,7 @@ def _make_pod_resource() -> Dict[str, Any]:
 def _make_pod_podannotations() -> Dict[str, Any]:
     # pylint:disable=line-too-long
     networks = [
-        {"name": "internet-network", "interface": "eth1", "ips": ["60.60.0.150"]}
+        {"name": "internet-network", "interface": "eth1", "ips": ["60.60.0.150"]}  # HARD-CODED IP? WHY? REMOVE IF POSSIBLE.
     ]  # noqa
     annot = {"annotations": {"k8s.v1.cni.cncf.io/networks": networks}}
 
@@ -177,6 +175,8 @@ def _make_pod_services(app_name: str):
         }
     ]
 
+def _validate_config(config: Dict[str, Any]):
+    pass  # TODO
 
 def make_pod_spec(
     image_info: Dict[str, str],
@@ -198,6 +198,7 @@ def make_pod_spec(
     if not image_info:
         return None
 
+    _validate_config(config)  # Create this function, and check all parameters needed there. Raise ValueError inside that function if something is not correct.
     ports = _make_pod_ports(config)
     env_config = _make_pod_envconfig(model_name)
     kubernetes = _make_pod_privilege()

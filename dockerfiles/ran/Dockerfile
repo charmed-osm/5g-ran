@@ -1,9 +1,10 @@
+# ADD APACHE LICENCE
 FROM ubuntu:18.04
 
 RUN apt-get update
 RUN apt-get -y install libtool net-tools openssh-server curl --fix-missing
 RUN apt-get clean
-
+# PIN PYTHON PACKAGES VERSIONS
 RUN apt-get install -y python-pip && python -m pip install kubernetes
 COPY free5gc/rantest /root/rantest
 RUN chmod +777 /root/rantest

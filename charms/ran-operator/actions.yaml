@@ -18,10 +18,16 @@
 # To get in touch with the maintainers, please contact:
 # canonical@tataelxsi.onmicrosoft.com
 ##
+
+# ADD "-" SEPARATING WORDS OF THE PARAMETERS. I.E. routing-indicator.
+# THE DESCRIPTIONS ARE NOT VERY COMPLETE.
+#   - ADD A SHORT DESCRIPTION OF EACH ACTION AND PARAMETER, RATHER THAN REPETING THE NAME OF THE PARAMETER IN EACH DESCRIPTION
+#   - IN THE PARAMETERS THAT HAVE A LIST OF POSSIBLE VALUES, PLEASE, ADD THEM IN THE DESCRIPTION.
 ---
 connect-amf:
-    description: "connection establishment between ran and
-                  amf component of core"
+    description: |
+        connection establishment between
+        ran and amf component of core"
 config-gnb:
     description: "gNB Config Read"
     params:
@@ -132,7 +138,7 @@ config-ue:
             description: "uemgmtip"
             type: string
             default: "10.1.135.26"
-        pdusessionid1:
+        pdusessionid1: # REMOVE THE 1 IF THERE IS NO 2.
             description: "pdusessionid1"
             type: integer
             default: 1

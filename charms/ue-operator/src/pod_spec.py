@@ -38,7 +38,6 @@ def _make_pod_ports(config: Dict[str, Any]) -> Dict[str, Any]:
         return [
             {"name": "ueport", "containerPort": config["ssh_port"], "protocol": "TCP"},
         ]
-    raise ValueError("Invalid ssh_port number")
 
 
 def _make_pod_privilege() -> Dict[str, Any]:
@@ -62,7 +61,7 @@ def _make_pod_command() -> List:
     ssh_run = [
         "/bin/bash",
         "-ec",
-        "while :; do service ssh restart; sleep 5 ; done",
+        "while :; do service ssh restart; sleep 5 ; done",  # WHY RESTART THE SSH SERVICE ALL THE TIME?
     ]
     return ssh_run
 
@@ -75,7 +74,7 @@ def _make_pod_podannotations() -> Dict[str, Any]:
                 {
                     "name": "internet-network",
                     "interface": "eth1",
-                    "ips": ["60.60.0.114"],
+                    "ips": ["60.60.0.114"],  # HARD-CODED IP? WHY? REMOVE IF POSSIBLE.
                 }
             ]  # noqa
         }
@@ -83,6 +82,9 @@ def _make_pod_podannotations() -> Dict[str, Any]:
 
     return annot
 
+
+def _validate_config(config: Dict[str, Any]):
+    pass  # TODO
 
 def make_pod_spec(
     image_info: Dict[str, str],
@@ -103,6 +105,7 @@ def make_pod_spec(
     if not image_info:
         return None
 
+    _validate_config(config)  # Create this function, and check all parameters needed there. Raise ValueError inside that function if something is not correct.
     ports = _make_pod_ports(config)
     cmd = _make_pod_command()
     kubernetes = _make_pod_privilege()

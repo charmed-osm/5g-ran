@@ -37,8 +37,9 @@ min-juju-version: 2.8.2
 deployment:
     type: stateless
     service: loadbalancer
+# No endpoints? Add missing endpoints here and relations in the bundle.
 resources:
     image:
         type: oci-image
         description: docker image for RAN
-        upstream-source: "localhost:32000/ran:1.0"
+        upstream-source: "localhost:32000/ran:1.0"  # replace this with the dockerfile pushed to docker hub

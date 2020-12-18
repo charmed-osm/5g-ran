@@ -27,6 +27,11 @@ Charm to deploy UE application pod.
 
 ## Usage
 
+
+> This does not explain how to use it. Add similar steps to the ones in the main readme.
+ - How to deploy it from the store
+ - How to deploy it locally.
+
 SSH has to be enabled inside pod with port 22 such that RAN application can modify the ip interface in UE pod
 
 

@@ -122,7 +122,6 @@ class TestPodSpec(unittest.TestCase):
                     "kind": "NetworkAttachmentDefinition",
                     "metadata": {"name": "internet-network"},
                     "spec": {
-                        # pylint:disable=line-too-long
                         "config": {
                             "cniVersion": "0.3.1",
                             "name": "internet-network",
@@ -136,7 +135,7 @@ class TestPodSpec(unittest.TestCase):
                                 "rangeEnd": "60.60.0.250",
                                 "gateway": "60.60.0.100",
                             },
-                        },  # noqa
+                        },
                     },
                 }
             ]
@@ -147,10 +146,13 @@ class TestPodSpec(unittest.TestCase):
 
     def test_make_pod_podannotations(self) -> NoReturn:
         """Teting make pod privilege"""
-        # pylint:disable=line-too-long
         networks = [
-            {"name": "internet-network", "interface": "eth1", "ips": ["60.60.0.150"]}
-        ]  # noqa
+            {
+                "name": "internet-network",
+                "interface": "eth1",
+                "ips": ["60.60.0.150"],
+            }
+        ]
         expected_result = {"annotations": {"k8s.v1.cni.cncf.io/networks": networks}}
         # pylint:disable=W0212
         pod_podannotations = pod_spec._make_pod_podannotations()

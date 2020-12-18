@@ -32,8 +32,9 @@ tags:
     - ue
 series:
     - kubernetes
+# No endpoints? Add missing endpoints and relations in the bundle.
 resources:
     image:
         type: oci-image
         description: docker image for UE
-        upstream-source: "localhost:32000/ue:1.0"
+        upstream-source: "localhost:32000/ue:1.0"  # replace this with the dockerfile pushed to docker hub

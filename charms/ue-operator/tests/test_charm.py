@@ -29,6 +29,7 @@ from ops.model import BlockedStatus
 from charm import UeCharm
 
 
+# REMOVE ALL #noqa, AND FIX IT PROPERLY
 class TestCharm(unittest.TestCase):
     """Test Charm"""
 

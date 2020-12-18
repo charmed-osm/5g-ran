@@ -38,10 +38,6 @@ from pod_spec import make_pod_spec
 logger = logging.getLogger(__name__)
 
 
-class ConfigurePodEvent(EventBase):
-    """Configure Pod event"""
-
-
 class RanCharm(CharmBase):
     """Ran Charm"""
 
@@ -60,17 +56,6 @@ class RanCharm(CharmBase):
         self.framework.observe(self.on.start, self.configure_pod)
         self.framework.observe(self.on.config_changed, self.configure_pod)
         self.framework.observe(self.on.upgrade_charm, self.configure_pod)
-
-        # Registering custom internal events
-        # self.framework.observe(self.on.configure_pod, self.configure_pod)
-
-        # self.framework.observe(self.on.config_changed, self._on_config_changed)
-
-    def _on_config_changed(self, _):
-        current = self.config["thing"]
-        if current not in self.state.things:
-            logger.debug("found a new thing: %r", current)
-            self.state.things.append(current)
 
     def configure_pod(self, event: EventBase) -> NoReturn:
         """Assemble the pod spec and apply it, if possible.
@@ -101,8 +86,9 @@ class RanCharm(CharmBase):
                 self.model.app.name,
             )
         except ValueError as exc:
-            logger.exception("Config data validation error")
-            self.unit.status = BlockedStatus(str(exc))
+            error_message = f"Config data validation error: {str(exc)}"
+            logger.exception(error_message)
+            self.unit.status = BlockedStatus(error_message)
             return
 
         if self.state.pod_spec != pod_spec:

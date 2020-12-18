@@ -22,6 +22,7 @@
 options:
     sctp_port:
         type: int
-        description: 'sctp_port is used for ran
-                        and core control plane communication'
+        description: |
+            sctp_port is used for ran and core
+            control plane communication
         default: 9487

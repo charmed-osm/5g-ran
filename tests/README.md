@@ -1,3 +1,7 @@
+> Please, format the readme properly
+> These commands do not work. Make sure the steps are clear, complete, and of course working.
+> If the main readme is complete, you may not need this one.
+
 To run the RAN FT:
 
 Command to create venv:

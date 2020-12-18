@@ -1,4 +1,3 @@
-#!/bin/bash
 # Copyright 2020 Tata Elxsi
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -18,18 +17,14 @@
 #
 # To get in touch with the maintainers, please contact:
 # canonical@tataelxsi.onmicrosoft.com
-
-cd ../charms
-charms="ran-operator ue-operator"
-
-if [ -z `which charmcraft` ]; then
-    sudo snap install charmcraft --beta
-fi
-
-for charm_directory in $charms; do
-    echo "Building charm $charm_directory..."
-    cd $charm_directory
-    echo $(pwd)
-    charmcraft build
-    cd ..
-done
+##
+---
+description: ran Bundle
+bundle: kubernetes
+applications:
+  ran:
+    charm: 'cs:~tata-charmers/ran'
+    scale: 1
+  ue:
+    charm: 'cs:~tata-charmers/ue'
+    scale: 1

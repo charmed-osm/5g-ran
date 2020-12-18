@@ -35,7 +35,7 @@ class BasicDeployment(unittest.TestCase):
             ran_ip = model.get_status().applications["ran"]["units"][unit.entity_id][
                 "address"
             ]
-        endpoint = "http://" + ran_ip + ":8081/configread"
+        endpoint = f"http://{ran_ip}:8081/configread"  # Please, use f-strings.
         data = {
             "Global": {"mcc": "208", "mnc": "93", "gnbid": "454647"},
             "supportlist": [
