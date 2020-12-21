@@ -1,13 +1,13 @@
 # Copyright 2020 Tata Elxsi
 #
-# Licensed under the Apache License, Version 2.0 (the License); you may
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
 # a copy of the License at
 #
 #         http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an AS IS BASIS, WITHOUT
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
@@ -19,20 +19,12 @@
 # canonical@tataelxsi.onmicrosoft.com
 ##
 ---
-name: ue
-summary: uecharm deploys the UE application as a microk8s pod
-maintainers:
-    - Tata Elxsi <canonical@tataelxsi.onmicrosoft.com>
-description: |
-    UE Charm deploys the Tata Elxsi developed UE application generator,
-    as a microk8s based pod.
-    Data traffic is generated in UE pod and send to/received from the
-    CORE through RAN pod.
-tags:
-    - ue
-series:
-    - kubernetes
-resources:
-    image:
-        type: oci-image
-        description: docker image for UE
+description: 5g-ran Bundle
+bundle: kubernetes
+applications:
+  ran:
+    charm: 'cs:~tataelxsi-charmers/ran'
+    scale: 1
+  ue:
+    charm: 'cs:~tataelxsi-charmers/ue'
+    scale: 1

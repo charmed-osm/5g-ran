@@ -41,4 +41,3 @@ resources:
     image:
         type: oci-image
         description: docker image for RAN
-        upstream-source: "localhost:32000/ran:1.0"
