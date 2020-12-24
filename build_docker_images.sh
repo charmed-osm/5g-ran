@@ -1,3 +1,4 @@
+#!/bin/bash
 # Copyright 2020 Tata Elxsi
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -17,21 +18,19 @@
 #
 # To get in touch with the maintainers, please contact:
 # canonical@tataelxsi.onmicrosoft.com
-##
----
-description: ran Bundle
-bundle: kubernetes
-applications:
-  ran:
-    charm: './charms/ran-operator/ran.charm'
-    scale: 1
-    resources:
-      image: 'localhost:32000/ran:1.0'
-  ue:
-    charm: './charms/ue-operator/ue.charm'
-    scale: 1
-    resources:
-      image: 'localhost:32000/ue:1.0'
-relations:
-  - - ue:ran
-    - ran:ran
+dir=dockerfiles
+if [ -z `which docker` ]; then
+    sudo apt-get update
+    sudo apt-get install -y docker.io
+fi
+cd $dir
+echo "Building image for RAN"
+cd ran
+sudo docker build -t localhost:32000/ran:1.0 .
+cd ..
+echo "Building image for UE"
+cd ue_app
+sudo docker build -t localhost:32000/ue:1.0 .
+echo "Images are build successfully"
+sudo docker images | grep "ran"
+sudo docker images | grep "ue"

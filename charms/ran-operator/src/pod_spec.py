@@ -22,7 +22,9 @@
 """ran operator pod_spec"""
 
 import logging
+import json
 from typing import Any, Dict, List
+from IPy import IP
 
 logger = logging.getLogger(__name__)
 
@@ -33,45 +35,42 @@ REST_PORT = 8081
 
 def _make_pod_ports(config: Dict[str, Any]) -> List[Dict[str, Any]]:
     """Generate pod ports details.
+
     Args:
-        port (int): port to expose.
+        config(Dict[str, Any]): Configuration information.
+
     Returns:
         List[Dict[str, Any]]: pod port details.
     """
-    if config["sctp_port"] > 0:
-        return [
-            {
-                "name": "ranport",
-                "containerPort": config["sctp_port"],
-                "protocol": "TCP",
-            },
-            {"name": "ranport2", "containerPort": REST_PORT, "protocol": "TCP"},
-        ]
-    # else:
-    raise ValueError("Invalid sctp port number")
+    return [
+        {
+            "name": "ranport",
+            "containerPort": config["sctp_port"],
+            "protocol": "TCP",
+        },
+        {"name": "ranport2", "containerPort": REST_PORT, "protocol": "TCP"},
+    ]
 
 
 def _make_pod_envconfig(model_name: str) -> Dict[str, Any]:
     """Generate pod environment configuration.
+
     Args:
-        config (Dict[str, Any]): configuration information.
-        relation_state (Dict[str, Any]): relation state information.
+         model_name(str):pod environment congiguration.
+
     Returns:
         Dict[str, Any]: pod environment configuration.
     """
-    envconfig = {
+    return {
         # General configuration
         "ALLOW_ANONYMOUS_LOGIN": "yes",
         "MODEL": model_name,
     }
 
-    return envconfig
-
 
 def _make_pod_privilege() -> Dict[str, Any]:
     """Generate pod privileges.
-    Args:
-        config (Dict[str, Any]): configuration information.
+
     Returns:
         Dict[str, Any]: pod privilege.
     """
@@ -80,6 +79,11 @@ def _make_pod_privilege() -> Dict[str, Any]:
 
 
 def _make_pod_serviceaccount() -> Dict[str, Any]:
+    """Generating pod service account.
+
+    Returns:
+        Dict[str, Any]: pod service account.
+    """
     serviceacc = {
         "automountServiceAccountToken": True,
         "roles": [
@@ -98,6 +102,11 @@ def _make_pod_serviceaccount() -> Dict[str, Any]:
 
 
 def _make_pod_customresourcedefinition() -> List[Dict[str, Any]]:
+    """Generate pod custom resource definition.
+
+    Returns:
+        List[Dict[str, Any]: pod custom resource definition.
+    """
     custom_def = [
         {
             "name": "network-attachment-definitions.k8s.cni.cncf.io",
@@ -117,17 +126,37 @@ def _make_pod_customresourcedefinition() -> List[Dict[str, Any]]:
     return custom_def
 
 
-def _make_pod_resource() -> Dict[str, Any]:
+def _make_pod_resource(config: Dict[str, Any]) -> Dict[str, Any]:
+    """Generate pod resource.
+
+    Args:
+        config(Dict[str, Any]):pod resource.
+
+    Returns:
+        Dict[str, Any]: pod resource.
+    """
+    ipam_body = {
+        "type": "host-local",
+        "subnet": config["pdn_subnet"],
+        "rangeStart": config["pdn_ip_range_start"],
+        "rangeEnd": config["pdn_ip_range_end"],
+        "gateway": config["pdn_gateway_ip"],
+    }
+    config_body = {
+        "cniVersion": "0.3.1",
+        "name": "internet-network",
+        "type": "macvlan",
+        "master": "ens3",
+        "mode": "bridge",
+        "ipam": ipam_body,
+    }
     resource = {
         "network-attachment-definitions.k8s.cni.cncf.io": [
             {
                 "apiVersion": "k8s.cni.cncf.io/v1",
                 "kind": "NetworkAttachmentDefinition",
                 "metadata": {"name": "internet-network"},
-                # pylint:disable=line-too-long
-                "spec": {
-                    "config": '{\n"cniVersion": "0.3.1",\n"name": "internet-network",\n"type": "macvlan",\n"master": "ens3",\n"mode": "bridge",\n"ipam": {\n"type": "host-local",\n"subnet": "60.60.0.0/16",\n"rangeStart": "60.60.0.50",\n"rangeEnd": "60.60.0.250",\n"gateway": "60.60.0.100"\n}\n}'  # noqa
-                },
+                "spec": {"config": json.dumps(config_body)},
             }
         ]
     }
@@ -136,14 +165,27 @@ def _make_pod_resource() -> Dict[str, Any]:
 
 
 def _make_pod_podannotations() -> Dict[str, Any]:
-    # pylint:disable=line-too-long
-    networks = '[\n{\n"name" : "internet-network",\n"interface": "eth1",\n"ips": ["60.60.0.150"]\n}\n]'  # noqa
-    annot = {"annotations": {"k8s.v1.cni.cncf.io/networks": networks}}
+    """Generate pod annotation.
+
+    Returns:
+        Dict[str, Any]: pod annotations.
+    """
+    annot = {
+        "annotations": {
+            "k8s.v1.cni.cncf.io/networks": '[\n{\n"name" : "internet-network",'
+            '\n"interface": "eth1",\n"ips": []\n}\n]'
+        }
+    }
 
     return annot
 
 
 def _make_pod_services(app_name: str):
+    """Generate pod services.
+
+    Args:
+        app_name(str): pod services.
+    """
     return [
         {
             "name": "udpnew-lb",
@@ -163,6 +205,23 @@ def _make_pod_services(app_name: str):
     ]
 
 
+def _validate_config(config: Dict[str, Any]):
+    """Validate config data.
+
+    Args:
+        config (Dict[str, Any]): configuration information.
+    """
+    if config.get("sctp_port") < 0:
+        raise ValueError("Invalid sctp port")
+    pdn_subnet = config.get("pdn_subnet")
+    pdn_ip_range_start = config.get("pdn_ip_range_start")
+    pdn_ip_range_end = config.get("pdn_ip_range_end")
+    pdn_gateway_ip = config.get("pdn_gateway_ip")
+    for pdn_conf in pdn_subnet, pdn_ip_range_start, pdn_ip_range_end, pdn_gateway_ip:
+        if not IP(pdn_conf):
+            raise ValueError("Value error in pdn ip configuration")
+
+
 def make_pod_spec(
     image_info: Dict[str, str],
     config: Dict[str, Any],
@@ -170,6 +229,7 @@ def make_pod_spec(
     app_name: str,
 ) -> Dict[str, Any]:
     """Generate the pod spec information.
+
     Args:
         image_info (Dict[str, str]): Object provided by
                                      OCIImageResource("image").fetch().
@@ -177,18 +237,20 @@ def make_pod_spec(
         relation_state (Dict[str, Any]): Relation state information.
         app_name (str, optional): Application name. Defaults to "pol".
         port (int, optional): Port for the container. Defaults to 80.
+
     Returns:
         Dict[str, Any]: Pod spec dictionary for the charm.
     """
     if not image_info:
         return None
 
+    _validate_config(config)
     ports = _make_pod_ports(config)
     env_config = _make_pod_envconfig(model_name)
     kubernetes = _make_pod_privilege()
     serviceaccount = _make_pod_serviceaccount()
     customdef = _make_pod_customresourcedefinition()
-    customresource = _make_pod_resource()
+    customresource = _make_pod_resource(config)
     podannotations = _make_pod_podannotations()
     services = _make_pod_services(app_name)
     return {

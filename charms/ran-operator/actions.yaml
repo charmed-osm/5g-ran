@@ -20,135 +20,187 @@
 ##
 ---
 connect-amf:
-    description: "connection establishment between ran and
-                  amf component of core"
+    description: |
+        connection establishment between
+        ran and amf component of core
 config-gnb:
-    description: "gNB Config Read"
+    description: |
+        gNodeB configurations updation
     params:
         mcc:
-            description: "mcc"
+            description: |
+                MCC part of Global gNB Id, used to
+                describe the Operator which the gNB belongs to
             type: string
             default: "208"
         mnc:
-            description: "mnc"
+            description: |
+                MNC part of Global gNB Id PLMN, used to describe
+                the Operator which the gNB belongs to
             type: string
             default: "93"
-        gnbid:
-            description: "gnbID"
+        gnb-id:
+            description: |
+                Global gNB Id, Unique identity used
+                to identify the gNB with in PLMN
             type: string
             default: "454647"
         tac:
-            description: "tac"
+            description: |
+                Unique code to identify the Tracking Area
             type: string
             default: "0123"
-        supportmcc:
-            description: "support mcc"
+        support-mcc:
+            description: |
+                MCC used to identify the shared operator
+                incase of shared network deployment
             type: string
             default: "206"
-        supportmnc:
-            description: "support mnc"
+        support-mnc:
+            description: |
+                MNC used to identify the shared operator
+                incase of shared network deployment
             type: string
             default: "93"
         sst:
-            description: "sst"
+            description: |
+                Slice/Service type used to identify the
+                network slice which the gNB supports
             type: string
             default: "01"
         sd:
-            description: "sd"
+            description: |
+                Slice differentiator to differentiate amongst
+                multiple Network Slices of the same Slice/Service type
             type: string
             default: "010202"
         paging:
-            description: "paging"
+            description: |
+                paging cycle used for determining the frequency
+                of UE paging for incoming notification
             type: string
             default: "v34"
-        gnbname:
-            description: "gnbname"
+        gnb-name:
+            description: |
+                Name of the gNB in the alpha numeric format
             type: string
             default: "Tata"
-        amfip:
-            description: "AMFIP"
+        amf-ip:
+            description: |
+                IP Address of amf component of core used for NGAP protocol
             type: string
             default: "10.45.28.51"
-        amfport:
-            description: "AMFPORT"
+        amf-port:
+            description: |
+                SCTP destination port NGAP communication
             type: string
             default: "38412"
-        gnbport:
-            description: "GNB PORT"
+        gnb-port:
+            description: |
+                SCTP source port used for NGAP communication
             type: string
             default: "9487"
-        ngapinterface:
-            description: "ngapinterface"
+        ngap-interface:
+            description: |
+                Interface used for listening NGAP protocol
             type: string
             default: "eth0"
-        upfip:
-            description: "upfip"
+        upf-ip:
+            description: |
+                IP Address of upf component of core used for GTP protocol
             type: string
             default: "10.45.28.53"
-        dbip:
-            description: "dbip"
+        pdn-interface:
+            description: |
+                Interface used for dataplane communication
+                between UE, ran and core
+            type: string
+            default: "eth1"
+        db-ip:
+            description: |
+                IP Address of mongo db
             type: string
             default: "10.45.28.52"
-        dbport:
-            description: "dbport"
+        db-port:
+            description: |
+                Port used for mongodb service
             type: string
             default: "27017"
-        dbname:
-            description: "dbname"
+        db-name:
+            description: |
+                Name of the db
             type: string
             default: "free5gc"
 config-ue:
     description: "UE configuration read"
     params:
         msin:
-            description: "msin"
+            description: |
+                Mobile Subscriber Identification Number(MSIN) which
+                is provisioned in the USIM
             type: string
             default: "00007487"
         mcc:
-            description: "mcc"
+            description: |
+                Mobile Country Code(MCC) which is provisioned in the USIM
             type: integer
             default: 208
         mnc:
-            description: "mnc"
+            description: |
+                Mobile Network Code(MNC) which is provisioned in the USIM
             type: integer
             default: 93
-        routingindicator:
-            description: "routingindicator"
+        routing-indicator:
+            description: |
+                Used to route the Authentication traffic to the
+                UDM that contains that subscriber information
             type: string
             default: "0fff"
-        protectionscheme:
-            description: "protectionscheme"
+        protection-scheme:
+            description: |
+                protection scheme, only null is supported
             type: string
             default: ""
         k:
-            description: "k"
+            description: |
+                secret key which is provisioned in the USIM
+                used for security key derivation
             type: integer
             default: 5463
         opc:
-            description: "opc"
+            description: |
+                operator key which is provisioned in the USIM
+                used for security key derivation
             type: integer
             default: 451011
-        uemgmtip:
-            description: "uemgmtip"
+        ue-mgmt-ip:
+            description: |
+                IP Address of UE's main interface
             type: string
             default: "10.1.135.26"
-        pdusessionid1:
-            description: "pdusessionid1"
+        pdu-session-id:
+            description: |
+                Used for identity of pdu session within UE
             type: integer
             default: 1
-        datanetworkname1:
-            description: "datanetworkname1"
+        data-network-name:
+            description: |
+                data network to which the user is subscribed
             type: string
             default: "internet"
-        uepdumacaddress1:
-            description: "uePDUMacAddress1"
+        ue-pdu-macaddress:
+            description: |
+                MAC address of UE's pdn interface
             type: string
             default: "7a:8a:fd:c7:85:8a"
-        sst1:
-            description: "sst1"
+        sst:
+            description: |
+                subscribed Slice/Service type used to identify the network slice
             type: integer
             default: 1
-        sd1:
-            description: "sd1"
+        sd:
+            description: |
+                Slice differentiator to differentiate amongst multiple Network
+                Slices of the same Slice/Service type
             type: string
             default: "010203"

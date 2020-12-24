@@ -22,6 +22,7 @@
 """ran operator tests pod_spec"""
 
 from typing import NoReturn
+import json
 import unittest
 import pod_spec
 
@@ -48,7 +49,6 @@ class TestPodSpec(unittest.TestCase):
         portdict = {
             "sctp_port": 9999,
         }
-        # pylint:disable=W0212
         pod_ports = pod_spec._make_pod_ports(portdict)
         self.assertListEqual(expected_result, pod_ports)
 
@@ -59,21 +59,19 @@ class TestPodSpec(unittest.TestCase):
             "ALLOW_ANONYMOUS_LOGIN": "yes",
             "MODEL": "rantest",
         }
-        # pylint:disable=W0212
         pod_envconfig = pod_spec._make_pod_envconfig("rantest")
         self.assertDictEqual(expected_result, pod_envconfig)
 
     def test_make_pod_privilege(self) -> NoReturn:
-        """Teting make pod privilege"""
+        """Teting make pod privilege."""
         expected_result = {
             "securityContext": {"privileged": True},
         }
-        # pylint:disable=W0212
         pod_privilege = pod_spec._make_pod_privilege()
         self.assertDictEqual(expected_result, pod_privilege)
 
     def test_make_pod_serviceaccount(self) -> NoReturn:
-        """Teting make pod serviceaccount"""
+        """Teting make pod serviceaccount."""
         expected_result = {
             "automountServiceAccountToken": True,
             "roles": [
@@ -88,12 +86,11 @@ class TestPodSpec(unittest.TestCase):
                 }
             ],
         }
-        # pylint:disable=W0212
         pod_serviceaccount = pod_spec._make_pod_serviceaccount()
         self.assertDictEqual(expected_result, pod_serviceaccount)
 
     def test_make_pod_customresourcedefinition(self) -> NoReturn:
-        """Teting make pod customresourcedefinition"""
+        """Teting make pod customresourcedefinition."""
         expected_result = [
             {
                 "name": "network-attachment-definitions.k8s.cni.cncf.io",
@@ -109,35 +106,58 @@ class TestPodSpec(unittest.TestCase):
                 },
             }
         ]
-        # pylint:disable=W0212
         pod_customresourcedefinition = pod_spec._make_pod_customresourcedefinition()
         self.assertListEqual(expected_result, pod_customresourcedefinition)
 
     def test_make_pod_resource(self) -> NoReturn:
-        """Teting make pod resource"""
+        """Teting make pod resource."""
+        config = {
+            "sctp_port": 1234,
+            "pdn_subnet": "60.60.0.0/16",
+            "pdn_ip_range_start": "60.60.0.50",
+            "pdn_ip_range_end": "60.60.0.250",
+            "pdn_gateway_ip": "60.60.0.100",
+        }
+        pdn_subnet = "60.60.0.0/16"
+        pdn_ip_range_start = "60.60.0.50"
+        pdn_ip_range_end = "60.60.0.250"
+        pdn_gateway_ip = "60.60.0.100"
+        pod_resource = pod_spec._make_pod_resource(config)
+        ipam_body = {
+            "type": "host-local",
+            "subnet": pdn_subnet,
+            "rangeStart": pdn_ip_range_start,
+            "rangeEnd": pdn_ip_range_end,
+            "gateway": pdn_gateway_ip,
+        }
+        config_body = {
+            "cniVersion": "0.3.1",
+            "name": "internet-network",
+            "type": "macvlan",
+            "master": "ens3",
+            "mode": "bridge",
+            "ipam": ipam_body,
+        }
         expected_result = {
             "network-attachment-definitions.k8s.cni.cncf.io": [
                 {
                     "apiVersion": "k8s.cni.cncf.io/v1",
                     "kind": "NetworkAttachmentDefinition",
                     "metadata": {"name": "internet-network"},
-                    # pylint:disable=line-too-long
-                    "spec": {
-                        "config": '{\n"cniVersion": "0.3.1",\n"name": "internet-network",\n"type": "macvlan",\n"master": "ens3",\n"mode": "bridge",\n"ipam": {\n"type": "host-local",\n"subnet": "60.60.0.0/16",\n"rangeStart": "60.60.0.50",\n"rangeEnd": "60.60.0.250",\n"gateway": "60.60.0.100"\n}\n}'  # noqa
-                    },
+                    "spec": {"config": json.dumps(config_body)},
                 }
             ]
         }
-        # pylint:disable=W0212
-        pod_resource = pod_spec._make_pod_resource()
         self.assertDictEqual(expected_result, pod_resource)
 
     def test_make_pod_podannotations(self) -> NoReturn:
-        """Teting make pod privilege"""
-        # pylint:disable=line-too-long
-        networks = '[\n{\n"name" : "internet-network",\n"interface": "eth1",\n"ips": ["60.60.0.150"]\n}\n]'  # noqa
-        expected_result = {"annotations": {"k8s.v1.cni.cncf.io/networks": networks}}
-        # pylint:disable=W0212
+        """Teting make pod privilege."""
+        expected_result = {
+            "annotations": {
+                "k8s.v1.cni.cncf.io/networks": '[\n{\n"name" : "internet-network",'
+                '\n"interface": "eth1",\n"ips": []\n}\n]'
+            }
+        }
         pod_podannotations = pod_spec._make_pod_podannotations()
         self.assertDictEqual(expected_result, pod_podannotations)
 
@@ -161,15 +181,30 @@ class TestPodSpec(unittest.TestCase):
                 },
             }
         ]
-        # pylint:disable=W0212
         pod_services = pod_spec._make_pod_services(appname)
         self.assertEqual(expected_result, pod_services)
 
+    def test_validate_config(self) -> NoReturn:
+        """Testing config data exception scenario."""
+        config = {
+            "sctp_port": 1234,
+            "pdn_subnet": "-60.60.0.0/16",
+            "pdn_ip_range_start": "-60.60.0.50",
+            "pdn_ip_range_end": "-60.60.0.250",
+            "pdn_gateway_ip": "-60.60.0.100",
+        }
+        with self.assertRaises(ValueError):
+            pod_spec._validate_config(config)
+
     def test_make_pod_spec(self) -> NoReturn:
-        """Testing make pod spec"""
+        """Testing make pod spec."""
         image_info = {"upstream-source": "localhost:32000/ran:1.0"}
         config = {
             "sctp_port": -9999,
+            "pdn_subnet": "-60.60.0.0/16",
+            "pdn_ip_range_start": "-60.60.0.50",
+            "pdn_ip_range_end": "-60.60.0.250",
+            "pdn_gateway_ip": "-60.60.0.100",
         }
         model_name = "ran"
         app_name = "udpnew"

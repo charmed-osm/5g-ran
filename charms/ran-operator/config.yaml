@@ -25,3 +25,24 @@ options:
         description: 'sctp_port is used for ran
                         and core control plane communication'
         default: 9487
+    pdn_subnet:
+        type: string
+        description: 'an inerface will be created in ran pod
+                        with pdn_subnet which will be used for
+                        data plane communication between ue,
+                        ran and core components'
+        default: "60.60.0.0/16"
+    pdn_ip_range_start:
+        type: string
+        description: 'pdn_ip_range_start is the pdn_subnet range
+                        satrt for pdn_subnet'
+        default: "60.60.0.50"
+    pdn_ip_range_end:
+        type: string
+        description: 'pdn_ip_range_end is the pdn_subnet range
+                        end for pdn_subnet'
+        default: "60.60.0.250"
+    pdn_gateway_ip:
+        type: string
+        description: 'pdn_gateway_ip is the gateway ip for pdn_subnet'
+        default: "60.60.0.100"

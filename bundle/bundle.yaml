@@ -28,3 +28,6 @@ applications:
   ue:
     charm: 'cs:~tataelxsi-charmers/ue'
     scale: 1
+relations:
+  - - ue:ran
+    - ran:ran

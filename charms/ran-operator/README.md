@@ -18,28 +18,71 @@
  To get in touch with the maintainers, please contact:
  canonical@tataelxsi.onmicrosoft.com
 -->
+
 # ran
 
 ## Description
 
 Charm to deploy RAN application
+Contains Juju action for configurating gNodeB and establishing sctp
+connection with CORE.
+UE configurations are also updated through action
+Attach Procedure is done through RestAPI call.
+
+## Prerequisite
+
+1. Install Charmcraft
+
+```bash
+sudo snap install charmcraft --beta
+```
 
 ## Usage
 
-For data transfer, Exposed an UDP Port 2152
-To integrate with core, Exposed port 8081 for Rest server
+### Deploy
+
+To deploy 5G RAN Emulator from Charmstore, use the following command
+
+```bash
+juju deploy cs:~tata-charmers/ran
+```
+
+#### Deploy from local repository
+
+a. Build using the following command
+
+   ```bash
+   charmcraft build
+   ```
+
+b. Deploy using the following command
+
+   ```bash
+   sudo juju deploy ran.charm
+   ```
 
 ## Developing
 
-Create and activate a virtualenv with the development requirements:
+To test add-route action,run the following command
 
-    virtualenv -p python3 venv
-    source venv/bin/activate
-    pip install -r requirements-dev.txt
+COMMAND : sudo juju run-action upf1/< UNIT-ID > add-route
+
+To check the status and output of the action ,use the following command
+
+COMMAND:
+sudo juju show-action-status < ACTION-ID >
+sudo juju show-action-output < ACTION-ID >
+
+Commands to create and activate a virtualenv with the development
+requirements, use the following command:
+
+   virtualenv -p python3 venv
+   source venv/bin/activate
+   pip install -r requirements-dev.txt
 
 ## Testing
 
 The Python operator framework includes a very nice harness for testing
 operator behaviour without full deployment. Just `run_tests`:
 
-    ./run_tests
+   ./run_tests

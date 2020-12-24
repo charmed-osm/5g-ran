@@ -1,23 +1,45 @@
 #!/bin/sh
+# Copyright 2020 Tata Elxsi
+#
+# Licensed under the Apache License, Version 2.0 (the License); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an AS IS BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+#
+# For those usages not covered by the Apache License, Version 2.0 please
+# contact: canonical@tataelxsi.onmicrosoft.com
+#
+# To get in touch with the maintainers, please contact:
+# canonical@tataelxsi.onmicrosoft.com
+##
+
 
 mcc=`action-get mcc`
 mnc=`action-get mnc`
-gnbid=`action-get gnbid`
+gnbid=`action-get gnb-id`
 tac=`action-get tac`
-supportmcc=`action-get supportmcc`
-supportmnc=`action-get supportmnc`
+supportmcc=`action-get support-mcc`
+supportmnc=`action-get support-mnc`
 sst=`action-get sst`
 sd=`action-get sd`
 paging=`action-get paging`
-gnbname=`action-get gnbname`
-amfip=`action-get amfip`
-amfport=`action-get amfport`
-gnbport=`action-get gnbport`
-ngapinterface=`action-get ngapinterface`
-upfip=`action-get upfip`
-dbip=`action-get dbip`
-dbport=`action-get dbport`
-dbname=`action-get dbname`
+gnbname=`action-get gnb-name`
+amfip=`action-get amf-ip`
+amfport=`action-get amf-port`
+gnbport=`action-get gnb-port`
+ngapinterface=`action-get ngap-interface`
+upfip=`action-get upf-ip`
+pdninterface=`action-get pdn-interface`
+dbip=`action-get db-ip`
+dbport=`action-get db-port`
+dbname=`action-get db-name`
 
 
 curl --location --request POST 'http://localhost:8081/configread' \
@@ -56,6 +78,9 @@ curl --location --request POST 'http://localhost:8081/configread' \
 	},
         \"upfconfig\":{
                 \"upfip\" : \"$upfip\"
+        },
+        \"pdnconfig\":{
+                \"pdninterface\" : \"$pdninterface\"
         },
 	\"dbconfig\":{
                 \"dbip\" : \"$dbip\",

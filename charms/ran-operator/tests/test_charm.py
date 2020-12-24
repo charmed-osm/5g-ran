@@ -24,6 +24,7 @@
 import unittest
 
 from typing import NoReturn
+import json
 from ops.testing import Harness
 from ops.model import BlockedStatus
 from charm import RanCharm
@@ -41,6 +42,21 @@ class TestCharm(unittest.TestCase):
     def test_config_changed(self) -> NoReturn:
         """Test installation without any relation."""
         self.harness.charm.on.start.emit()
+        ipam_body = {
+            "type": "host-local",
+            "subnet": "60.60.0.0/16",
+            "rangeStart": "60.60.0.50",
+            "rangeEnd": "60.60.0.250",
+            "gateway": "60.60.0.100",
+        }
+        config_body = {
+            "cniVersion": "0.3.1",
+            "name": "internet-network",
+            "type": "macvlan",
+            "master": "ens3",
+            "mode": "bridge",
+            "ipam": ipam_body,
+        }
         expected_result = {
             "version": 3,
             "containers": [
@@ -102,17 +118,14 @@ class TestCharm(unittest.TestCase):
                             "apiVersion": "k8s.cni.cncf.io/v1",
                             "kind": "NetworkAttachmentDefinition",
                             "metadata": {"name": "internet-network"},
-                            # pylint:disable=line-too-long
-                            "spec": {
-                                "config": '{\n"cniVersion": "0.3.1",\n"name": "internet-network",\n"type": "macvlan",\n"master": "ens3",\n"mode": "bridge",\n"ipam": {\n"type": "host-local",\n"subnet": "60.60.0.0/16",\n"rangeStart": "60.60.0.50",\n"rangeEnd": "60.60.0.250",\n"gateway": "60.60.0.100"\n}\n}'  # noqa
-                            },
-                        }
+                            "spec": {"config": json.dumps(config_body)},
+                        },
                     ]
                 },
                 "pod": {
                     "annotations": {
-                        # pylint:disable=line-too-long
-                        "k8s.v1.cni.cncf.io/networks": '[\n{\n"name" : "internet-network",\n"interface": "eth1",\n"ips": ["60.60.0.150"]\n}\n]'  # noqa
+                        "k8s.v1.cni.cncf.io/networks": '[\n{\n"name" : "internet-network",'
+                        '\n"interface": "eth1",\n"ips": []\n}\n]'
                     }
                 },
                 "services": [

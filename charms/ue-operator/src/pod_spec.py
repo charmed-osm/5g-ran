@@ -25,26 +25,26 @@ import logging
 from typing import Any, Dict, List
 
 logger = logging.getLogger(__name__)
+SSH_PORT = 22
 
 
 def _make_pod_ports(config: Dict[str, Any]) -> Dict[str, Any]:
     """Generate pod ports details.
+
     Args:
-        port (int): port to expose.
+        config(Dict[str, Any]): pod ports.
+
     Returns:
         List[Dict[str, Any]]: pod port details.
     """
-    if config["ssh_port"] == 22:
-        return [
-            {"name": "ueport", "containerPort": config["ssh_port"], "protocol": "TCP"},
-        ]
-    raise ValueError("Invalid ssh_port number")
+    return [
+        {"name": "ueport", "containerPort": config["ssh_port"], "protocol": "TCP"},
+    ]
 
 
 def _make_pod_privilege() -> Dict[str, Any]:
     """Generate pod privileges.
-    Args:
-        config (Dict[str, Any]): configuration information.
+
     Returns:
         Dict[str, Any]: pod privilege.
     """
@@ -53,11 +53,10 @@ def _make_pod_privilege() -> Dict[str, Any]:
 
 
 def _make_pod_command() -> List:
-    """Generate pod privileges.
-    Args:
-        config (Dict[str, Any]): configuration information.
+    """Generate pod command.
+
     Returns:
-        Dict[str, Any]: pod privilege.
+        List: pod command.
     """
     ssh_run = [
         "/bin/bash",
@@ -68,14 +67,29 @@ def _make_pod_command() -> List:
 
 
 def _make_pod_podannotations() -> Dict[str, Any]:
+    """Generate pod annotation.
+
+    Returns:
+        Dict[str, Any]: pod annotation.
+    """
     annot = {
         "annotations": {
-            # pylint:disable=line-too-long
-            "k8s.v1.cni.cncf.io/networks": '[\n{\n"name" : "internet-network",\n"interface": "eth1",\n"ips": ["60.60.0.114"]\n}\n]'  # noqa
+            "k8s.v1.cni.cncf.io/networks": '[\n{\n"name" : "internet-network",'
+            '\n"interface": "eth1",\n"ips": []\n}\n]'
         }
     }
 
     return annot
+
+
+def _validate_config(config: Dict[str, Any]) -> None:
+    """Validate config data.
+
+    Args:
+        config (Dict[str, Any]): configuration information.
+    """
+    if config.get("ssh_port") != SSH_PORT:
+        raise ValueError("Invalid ssh port")
 
 
 def make_pod_spec(
@@ -84,6 +98,7 @@ def make_pod_spec(
     app_name: str,
 ) -> Dict[str, Any]:
     """Generate the pod spec information.
+
     Args:
         image_info (Dict[str, str]): Object provided by
                                      OCIImageResource("image").fetch().
@@ -91,12 +106,14 @@ def make_pod_spec(
         relation_state (Dict[str, Any]): Relation state information.
         app_name (str, optional): Application name. Defaults to "pol".
         port (int, optional): Port for the container. Defaults to 80.
+
     Returns:
         Dict[str, Any]: Pod spec dictionary for the charm.
     """
     if not image_info:
         return None
 
+    _validate_config(config)
     ports = _make_pod_ports(config)
     cmd = _make_pod_command()
     kubernetes = _make_pod_privilege()

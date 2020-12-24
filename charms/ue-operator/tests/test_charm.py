@@ -38,7 +38,20 @@ class TestCharm(unittest.TestCase):
         self.harness.set_leader(is_leader=True)
         self.harness.begin()
 
-    def test_config_changed(self) -> NoReturn:
+    def test_on_start_without_relations(self) -> NoReturn:
+        """Test installation without any relation."""
+        self.harness.charm.on.start.emit()
+
+        # Verifying status
+        self.assertIsInstance(self.harness.charm.unit.status, BlockedStatus)
+
+        # Verifying status message
+        self.assertGreater(len(self.harness.charm.unit.status.message), 0)
+        self.assertTrue(
+            self.harness.charm.unit.status.message.startswith("Waiting for")
+        )
+
+    def test_on_start_with_relations(self) -> NoReturn:
         """Test installation without any relation."""
         self.harness.charm.on.start.emit()
         expected_result = {
@@ -68,28 +81,28 @@ class TestCharm(unittest.TestCase):
             "kubernetesResources": {
                 "pod": {
                     "annotations": {
-                        # pylint:disable=line-too-long
-                        "k8s.v1.cni.cncf.io/networks": [
-                            {
-                                "name": "internet-network",
-                                "interface": "eth1",
-                                "ips": ["60.60.0.114"],
-                            }
-                        ]  # noqa
+                        "k8s.v1.cni.cncf.io/networks": '[\n{\n"name" : "internet-network",'
+                        '\n"interface": "eth1",\n"ips": []\n}\n]'
                     }
                 },
             },
         }
+
+        self.assertIsNone(self.harness.charm.state.ran_host)
+        ran_relation_id = self.harness.add_relation("ran", "ran")
+        self.harness.add_relation_unit(ran_relation_id, "ran/0")
+        self.harness.update_relation_data(
+            ran_relation_id, "ran", {"hostname": "ran"}
+        )
+
+        # Checking if nrf data is stored
+        self.assertEqual(self.harness.charm.state.ran_host, "ran")
 
         # Verifying status
         self.assertNotIsInstance(self.harness.charm.unit.status, BlockedStatus)
 
         pod_spec, _ = self.harness.get_pod_spec()
         self.assertDictEqual(expected_result, pod_spec)
-
-        # Verifying status message
-        self.assertGreater(len(self.harness.charm.unit.status.message), 0)
-        self.assertFalse(self.harness.charm.unit.status.message.endswith(" relations"))
 
 
 if __name__ == "__main__":

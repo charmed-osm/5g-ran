@@ -40,41 +40,46 @@ class TestPodSpec(unittest.TestCase):
             }
         ]
         dictport = {"ssh_port": 22}
-        # pylint:disable=W0212
         pod_ports = pod_spec._make_pod_ports(dictport)
         self.assertListEqual(expected_result, pod_ports)
 
     def test_make_pod_privilege(self) -> NoReturn:
-        """Teting make pod privilege"""
+        """Teting make pod privilege."""
         expected_result = {
             "securityContext": {"capabilities": {"add": ["NET_ADMIN"]}},
         }
-        # pylint:disable=W0212
         pod_privilege = pod_spec._make_pod_privilege()
         self.assertDictEqual(expected_result, pod_privilege)
 
     def test_make_pod_command(self) -> NoReturn:
-        """Teting make pod command"""
+        """Teting make pod command."""
         expected_result = [
             "/bin/bash",
             "-ec",
             "while :; do service ssh restart; sleep 5 ; done",
         ]
-        # pylint:disable=W0212
         pod_command = pod_spec._make_pod_command()
         self.assertListEqual(expected_result, pod_command)
 
     def test_make_pod_podannotations(self) -> NoReturn:
-        """Teting make pod privilege"""
-        # pylint:disable=line-too-long
-        networks = '[\n{\n"name" : "internet-network",\n"interface": "eth1",\n"ips": ["60.60.0.114"]\n}\n]' # noqa
-        expected_result = {"annotations": {"k8s.v1.cni.cncf.io/networks": networks}}
-        # pylint:disable=W0212
+        """Teting make pod privilege."""
+        expected_result = {
+            "annotations": {
+                "k8s.v1.cni.cncf.io/networks": '[\n{\n"name" : "internet-network",'
+                '\n"interface": "eth1",\n"ips": []\n}\n]'
+            }
+        }
         pod_podannotations = pod_spec._make_pod_podannotations()
         self.assertDictEqual(expected_result, pod_podannotations)
 
+    def test_validate_config(self) -> NoReturn:
+        """Testing config data exception scenario."""
+        config = {"ssh_port": 1234}
+        with self.assertRaises(ValueError):
+            pod_spec._validate_config(config)
+
     def test_make_pod_spec(self) -> NoReturn:
-        """Testing make pod spec"""
+        """Testing make pod spec."""
         image_info = {"upstream-source": "localhost:32000/ue:1.0"}
         config = {
             "ssh_port": 9999,

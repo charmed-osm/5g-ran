@@ -22,24 +22,20 @@
 """Operator Charm main library."""
 # Load modules from lib directory
 import logging
+
 from typing import NoReturn
+
 from oci_image import OCIImageResource, OCIImageResourceError
 
-# from typing import Any, Dict, NoReturn
-
-# import setuppath  # noqa:F401
 from ops.charm import CharmBase
 from ops.framework import StoredState, EventBase
 from ops.main import main
 from ops.model import BlockedStatus, ActiveStatus, MaintenanceStatus
+
 from pod_spec import make_pod_spec
 
 
 logger = logging.getLogger(__name__)
-
-
-class ConfigurePodEvent(EventBase):
-    """Configure Pod event"""
 
 
 class RanCharm(CharmBase):
@@ -48,7 +44,7 @@ class RanCharm(CharmBase):
     state = StoredState()
 
     def __init__(self, *args) -> NoReturn:
-        """RAN Charm constructor"""
+        """RAN Charm constructor."""
         super().__init__(*args)
 
         # Internal state initialization
@@ -59,26 +55,21 @@ class RanCharm(CharmBase):
         # Registering regular events
         self.framework.observe(self.on.start, self.configure_pod)
         self.framework.observe(self.on.config_changed, self.configure_pod)
-        self.framework.observe(self.on.upgrade_charm, self.configure_pod)
 
-        # Registering custom internal events
-        # self.framework.observe(self.on.configure_pod, self.configure_pod)
+        # Registering provided relation events
+        self.framework.observe(self.on.ran_relation_joined, self._publish_network_info)
 
-        # self.framework.observe(self.on.config_changed, self._on_config_changed)
+    def _publish_network_info(self, event: EventBase) -> NoReturn:
+        """Publishes ran network information to UE.
 
-    def _on_config_changed(self, _):
-        current = self.config["thing"]
-        if current not in self.state.things:
-            logger.debug("found a new thing: %r", current)
-            self.state.things.append(current)
-
-    def configure_pod(self, event: EventBase) -> NoReturn:
-        """Assemble the pod spec and apply it, if possible.
         Args:
-            event (EventBase): Hook or Relation event that started the
-                               function.
+             event (EventBase): ran relation event to update UE.
         """
-        logging.info(event)
+        if self.unit.is_leader():
+            event.relation.data[self.model.app]["hostname"] = self.model.app.name
+
+    def configure_pod(self, _=None) -> NoReturn:
+        """Assemble the pod spec and apply it, if possible."""
         if not self.unit.is_leader():
             self.unit.status = ActiveStatus("ready")
             return
@@ -101,7 +92,8 @@ class RanCharm(CharmBase):
                 self.model.app.name,
             )
         except ValueError as exc:
-            logger.exception("Config data validation error")
+            error_message = f"Config data validation error: {str(exc)}"
+            logger.exception(error_message)
             self.unit.status = BlockedStatus(str(exc))
             return
 

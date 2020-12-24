@@ -19,7 +19,8 @@
  To get in touch with the maintainers, please contact:
  canonical@tataelxsi.onmicrosoft.com
 -->
-# ran
+
+# UE
 
 ## Description
 
@@ -27,20 +28,52 @@ Charm to deploy UE application pod.
 
 ## Usage
 
-SSH has to be enabled inside pod with port 22 such that RAN application can modify the ip interface in UE pod
+SSH has to be enabled inside pod with port 22 such that RAN application
+can modify the ip interface in UE pod
 
+## Prerequisite
+
+1. Install Charmcraft
+
+```bash
+sudo snap install charmcraft --beta
+```
+
+### Deploy
+
+To deploy UE from Charmstore, use the following command
+
+```bash
+juju deploy cs:~tata-charmers/ue
+```
+
+NOTE: UE requries RAN to be up for successful deployment
+
+#### Deploy from local repository
+
+a. Build using the following command
+
+   ```bash
+   charmcraft build
+   ```
+
+b. Deploy using the following command
+
+   ```bash
+   sudo juju deploy ue.charm
+   ```
 
 ## Developing
 
 Create and activate a virtualenv with the development requirements:
 
-    virtualenv -p python3 venv
-    source venv/bin/activate
-    pip install -r requirements-dev.txt
+   virtualenv -p python3 venv
+   source venv/bin/activate
+   pip install -r requirements-dev.txt
 
 ## Testing
 
 The Python operator framework includes a very nice harness for testing
 operator behaviour without full deployment. Just `run_tests`:
 
-    ./run_tests
+   ./run_tests

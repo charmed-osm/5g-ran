@@ -26,9 +26,8 @@ maintainers:
 description: |
     Ran deploys the Tata Elxsi developed 5G RAN Emulator,
     as a microk8s based pod.
-    gNodeB configurations, sctp connection are done through Day1 action.
-    Attach Procedure is done through RestAPI call.
-    UE configurations are updated through Day2 action
+    5g data plane and control plane communication between CORE
+    and UE happens through Radio Access Network(RAN)
 tags:
     - 5g-ran
 series:
@@ -41,3 +40,6 @@ resources:
     image:
         type: oci-image
         description: docker image for RAN
+provides:
+    ran:
+        interface: ran

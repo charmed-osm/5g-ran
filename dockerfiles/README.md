@@ -19,31 +19,45 @@
  To get in touch with the maintainers, please contact:
  canonical@tataelxsi.onmicrosoft.com
 -->
+
 # 5G RAN Emulator docker files
 
-This directory holds the docker files to build the docker images for ran-emulator and UE app.
+This directory holds the docker files to build the docker
+images for ran-emulator and UE app.
 
 ## Description
 
 Consists of 2 docker files
+
 * ran
 * ue_app
 
 ## Prerequisites
 
-Copy rantest to ran folder. Example: 
+Copy rantest to ran folder. Example:
 cp rantest ran/.
 
 Copy ran.so to ran folder. Example:
 cp ran.so ran/.
 
-
 ## Usage
 
-cd ran
-sudo docker build . -t <image_name>:tag
-cd ue_app
-sudo docker build . -t <image_name>:tag
+To build images of all the 5G RAN Components,
+
+```bash
+cd ..
+./build_docker_images.sh
+
+```
+
+To push the built images to registry,
+
+```bash
+
+docker push localhost:32000/ran:1.0
+docker push localhost:32000/ue:1.0
+
+```
 
 ## Exposed Ports
 
@@ -54,4 +68,3 @@ sudo docker build . -t <image_name>:tag
 ----------------------------------------------------------
 |   ue_app     |        22        |      NA              |
 ----------------------------------------------------------
-

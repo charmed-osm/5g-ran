@@ -13,131 +13,132 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-
+---
 vnfd-catalog:
     schema-version: "v3.0"
     vnfd:
-    -   id: ran_vnfd
-        name: ran_vnfd
-        short-name: ran_vnfd
-        description: VNFD for 5G RAN
-        vendor: TATA ELXSI
-        version: '1.0'
-        connection-point:
-        -   name: mgmtnet
-        # Management interface
-        mgmt-interface:
-            cp: mgmt
+        - id: ran_vnfd
+          name: ran_vnfd
+          short-name: ran_vnfd
+          description: VNFD for 5G RAN
+          vendor: TATA ELXSI
+          version: "2.0"
+          connection-point:
+              - name: mgmtnet
+          # Management interface
+          mgmt-interface:
+              cp: mgmt
 
-        # At least one VDU need to be specified
-        kdu:
-        -   name: ran-kdu
-            juju-bundle: bundle.yaml
-            kdu-configuration:
-                initial-config-primitive:
-                -   name: config-gnb
-                    parameter:
-                    -   name: application-name
-                        data-type: STRING
-                        value: ran
-                    -   name: mcc
-                        data-type: STRING
-                        value: "208"
-                    -   name: mnc
-                        data-type: STRING
-                        value: "93"
-                    -   name: gnbid
-                        data-type: STRING
-                        value: "454647"
-                    -   name: tac
-                        data-type: STRING
-                        value: "0123"
-                    -   name: supportmcc
-                        data-type: STRING
-                        value: "206"
-                    -   name: supportmnc
-                        data-type: STRING
-                        value: "93"
-                    -   name: sst
-                        data-type: STRING
-                        value: "01"
-                    -   name: sd
-                        data-type: STRING
-                        value: "010202"
-                    -   name: paging
-                        data-type: STRING
-                        value: "v34"
-                    -   name: gnbname
-                        data-type: STRING
-                        value: "Tata"
-                    -   name: amfip
-                        data-type: STRING
-                        value: "10.45.28.46"
-                    -   name: amfport
-                        data-type: STRING
-                        value: "38412"
-                    -   name: gnbport
-                        data-type: STRING
-                        value: "9487"
-                    -   name: ngapinterface
-                        data-type: STRING
-                        value: "eth0"
-                    -   name: upfip
-                        data-type: STRING
-                        value: "10.45.28.48"
-                    -   name: dbip
-                        data-type: STRING
-                        value: "10.45.28.47"
-                    -   name: dbport
-                        data-type: STRING
-                        value: "27017"
-                    -   name: dbname
-                        data-type: STRING
-                        value: "free5gc"
-                    seq: '1'
-                -   name: connect-amf
-                    parameter:
-                    -   name: application-name
-                        data-type: STRING
-                        value: ran
-                    seq: '2'
+          # At least one VDU need to be specified
+          kdu:
+              - name: ran-kdu
+                juju-bundle: bundle.yaml
+                kdu-configuration:
+                    initial-config-primitive:
+                        - name: config-gnb
+                          parameter:
+                              - name: application-name
+                                data-type: STRING
+                                value: ran
+                              - name: mcc
+                                data-type: STRING
+                                value: "208"
+                              - name: mnc
+                                data-type: STRING
+                                value: "93"
+                              - name: gnb-id
+                                data-type: STRING
+                                value: "454647"
+                              - name: tac
+                                data-type: STRING
+                                value: "0123"
+                              - name: support-mcc
+                                data-type: STRING
+                                value: "206"
+                              - name: support-mnc
+                                data-type: STRING
+                                value: "93"
+                              - name: sst
+                                data-type: STRING
+                                value: "01"
+                              - name: sd
+                                data-type: STRING
+                                value: "010202"
+                              - name: paging
+                                data-type: STRING
+                                value: "v34"
+                              - name: gnb-name
+                                data-type: STRING
+                                value: "Tata"
+                              - name: amf-ip
+                                data-type: STRING
+                                value: "10.45.28.46"
+                              - name: amf-port
+                                data-type: STRING
+                                value: "38412"
+                              - name: gnb-port
+                                data-type: STRING
+                                value: "9487"
+                              - name: ngap-interface
+                                data-type: STRING
+                                value: "eth0"
+                              - name: upf-ip
+                                data-type: STRING
+                                value: "10.45.28.48"
+                              - name: pdn-interface
+                                data-type: STRING
+                                value: "eth1"
+                              - name: db-ip
+                                data-type: STRING
+                                value: "10.45.28.47"
+                              - name: db-port
+                                data-type: STRING
+                                value: "27017"
+                              - name: db-name
+                                data-type: STRING
+                                value: "free5gc"
+                          seq: '1'
+                        - name: connect-amf
+                          parameter:
+                              - name: application-name
+                                data-type: STRING
+                                value: ran
+                          seq: '2'
+                    config-primitive:
+                        - name: config-ue
+                          parameter:
+                              - name: application-name
+                                data-type: STRING
+                                default-value: ran
+                              - name: msin
+                                data-type: STRING
+                                default-value: ""
+                              - name: mcc
+                                data-type: INTEGER
+                              - name: mnc
+                                data-type: INTEGER
+                              - name: routing-indicator
+                                data-type: STRING
+                              - name: protection-scheme
+                                data-type: STRING
+                              - name: k
+                                data-type: INTEGER
+                              - name: opc
+                                data-type: INTEGER
+                              - name: ue-mgmt-ip
+                                data-type: STRING
+                              - name: pdu-session-id
+                                data-type: INTEGER
+                              - name: data-network-name
+                                data-type: STRING
+                              - name: ue-pdu-macaddress
+                                data-type: STRING
+                              - name: sst
+                                data-type: INTEGER
+                              - name: sd
+                                data-type: STRING
 
-                config-primitive:
-                -   name: config-ue
-                    parameter:
-                    -   name: application-name
-                        data-type: STRING
-                        default-value: ran
-                    -   name: msin
-                        data-type: STRING
-                        default-value: ""
-                    -   name: mcc
-                        data-type: INTEGER
-                    -   name: mnc
-                        data-type: INTEGER
-                    -   name: routingindicator
-                        data-type: STRING
-                    -   name: protectionscheme
-                        data-type: STRING
-                    -   name: k
-                        data-type: INTEGER
-                    -   name: opc
-                        data-type: INTEGER
-                    -   name: uemgmtip
-                        data-type: STRING
-                    -   name: pdusessionid1
-                        data-type: INTEGER
-                    -   name: datanetworkname1
-                        data-type: STRING
-                    -   name: uepdumacaddress1
-                        data-type: STRING
-                    -   name: sst1
-                        data-type: INTEGER
-                    -   name: sd1
-                        data-type: STRING
-
-        k8s-cluster:
-            nets:
-            -   id: mgmtnet
-                external-connection-point-ref: mgmt
-
+          k8s-cluster:
+              nets:
+                  - id: mgmtnet
+                    external-connection-point-ref: mgmt

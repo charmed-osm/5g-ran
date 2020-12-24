@@ -22,22 +22,20 @@
 """Operator Charm main library."""
 # Load modules from lib directory
 import logging
-from typing import NoReturn
+
+from typing import Any, Dict, NoReturn
+
 from oci_image import OCIImageResource, OCIImageResourceError
 
-# import setuppath  # noqa:F401
 from ops.charm import CharmBase
 from ops.framework import StoredState, EventBase
 from ops.main import main
 from ops.model import ActiveStatus, BlockedStatus, MaintenanceStatus
+
 from pod_spec import make_pod_spec
 
 
 logger = logging.getLogger(__name__)
-
-
-class ConfigurePodEvent(EventBase):
-    """Configure Pod event"""
 
 
 class UeCharm(CharmBase):
@@ -46,7 +44,7 @@ class UeCharm(CharmBase):
     state = StoredState()
 
     def __init__(self, *args) -> NoReturn:
-        """UE Charm constructor"""
+        """UE Charm constructor."""
         super().__init__(*args)
 
         # Internal state initialization
@@ -57,26 +55,69 @@ class UeCharm(CharmBase):
         # Registering regular events
         self.framework.observe(self.on.start, self.configure_pod)
         self.framework.observe(self.on.config_changed, self.configure_pod)
-        self.framework.observe(self.on.upgrade_charm, self.configure_pod)
 
-        # Registering custom internal events
-        # self.framework.observe(self.on.configure_pod, self.configure_pod)
+        # Registering required relation changed events
+        self.framework.observe(
+            self.on.ran_relation_changed, self._on_ran_relation_changed
+        )
 
-        # self.framework.observe(self.on.config_changed, self._on_config_changed)
+        # Registering required relation departed events
+        self.framework.observe(
+            self.on.ran_relation_departed, self._on_ran_relation_departed
+        )
 
-    def _on_config_changed(self, _):
-        current = self.config["thing"]
-        if current not in self.state.things:
-            logger.debug("found a new thing: %r", current)
-            self.state.things.append(current)
+        # -- initialize states --
+        self.state.set_default(ran_host=None)
 
-    def configure_pod(self, event: EventBase) -> NoReturn:
-        """Assemble the pod spec and apply it, if possible.
+    def _on_ran_relation_changed(self, event: EventBase) -> NoReturn:
+        """Reads information about the ran relation.
         Args:
-            event (EventBase): Hook or Relation event that started the
-                               function.
+           event (EventBase): ran relation event.
         """
-        logging.info(event)
+        if event.app not in event.relation.data:
+            return
+
+        ran_host = event.relation.data[event.app].get("hostname")
+        if ran_host and self.state.ran_host != ran_host:
+            self.state.ran_host = ran_host
+            self.configure_pod()
+
+    def _on_ran_relation_departed(self, _=None) -> NoReturn:
+        """Clears data from ran relation departed."""
+        self.state.ran_host = None
+        self.configure_pod()
+
+    def _missing_relations(self) -> str:
+        """Checks if there missing relations.
+
+        Returns:
+            str: string with missing relations
+        """
+        data_status = {"ran": self.state.ran_host}
+        missing_relations = [k for k, v in data_status.items() if not v]
+        return ", ".join(missing_relations)
+
+    @property
+    def relation_state(self) -> Dict[str, Any]:
+        """Collects relation state configuration for pod spec assembly.
+
+        Returns:
+            Dict[str, Any]: relation state information.
+        """
+        relation_state = {"ran_host": self.state.ran_host}
+
+        return relation_state
+
+    def configure_pod(self, _=None) -> NoReturn:
+        """Assemble the pod spec and apply it, if possible."""
+
+        missing = self._missing_relations()
+        if missing:
+            status = "Waiting for {0} relation{1}"
+            self.unit.status = BlockedStatus(
+                status.format(missing, "s" if "," in missing else "")
+            )
+            return
         if not self.unit.is_leader():
             self.unit.status = ActiveStatus("ready")
             return
@@ -98,7 +139,8 @@ class UeCharm(CharmBase):
                 self.model.app.name,
             )
         except ValueError as exc:
-            logger.exception("Config data validation error")
+            error_message = f"Config data validation error: {str(exc)}"
+            logger.exception(error_message)
             self.unit.status = BlockedStatus(str(exc))
             return
 

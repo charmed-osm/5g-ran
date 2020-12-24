@@ -36,3 +36,6 @@ resources:
     image:
         type: oci-image
         description: docker image for UE
+requires:
+    ran:
+        interface: ran
