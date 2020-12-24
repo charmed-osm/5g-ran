@@ -28,7 +28,6 @@ charm does not have any relations or config options to exercise.
 import unittest
 import socket
 import logging
-import requests
 import zaza.model as model
 
 
@@ -49,4 +48,3 @@ class BasicDeployment(unittest.TestCase):
             else:
                 logging.info("GTP Transport is not available")
             self.assertEqual(result, 0)
-
