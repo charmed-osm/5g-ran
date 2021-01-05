@@ -63,15 +63,19 @@ b. Deploy using the following command
 
 ## Developing
 
-To test add-route action,run the following command
+To test config-gnb action,run the following command
 
-COMMAND : sudo juju run-action upf1/< UNIT-ID > add-route
+COMMAND : sudo juju run-action ran/< UNIT-ID > config-gnb amfip=<'amf-ip'> dbip=<'dbip'>  upfip=<'upf-ip'>
+
+The above ips are obtained from Core deployment
 
 To check the status and output of the action ,use the following command
 
 COMMAND:
 sudo juju show-action-status < ACTION-ID >
 sudo juju show-action-output < ACTION-ID >
+
+Similarly other actions can be trigerred. 
 
 Commands to create and activate a virtualenv with the development
 requirements, use the following command:
