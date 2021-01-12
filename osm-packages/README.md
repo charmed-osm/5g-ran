@@ -23,8 +23,8 @@ Copyright 2020 Tata Elxsi
 # Create and Onboard 5g-ran osm packages
 
 > To create osm vnf and ns packages, use the following commands which will
-generate a vnf package structure named ran_vnf and ns package structure named
-ran_ns
+> generate a vnf package structure named ran_vnf and ns package structure named
+> ran_ns
 
 ```bash
 osm package-create vnf ran
@@ -43,20 +43,20 @@ day1 action(config-gnb) section of ran_vnfd.yaml.
 These are the external loadbalancer ips of amf,upf and mongodb service
 running in 5g-core.
 
->To place the bundles in vnf package
+> To place the bundles in vnf package
 
 ```bash
 mkdir -p "ran_vnf/juju-bundles" && cp ../bundle/bundle.yaml "ran_vnf/juju-bundles"
 ```
 
->To onboard packages into OSM, use the following commands
+> To onboard packages into OSM, use the following commands
 
 ```bash
 osm nfpkg-create ran_vnf
 osm nspkg-create ran_ns
 ```
 
->Onboarded packages can be verified with the following commands
+> Onboarded packages can be verified with the following commands
 
 ```bash
 osm nfpkg-list
@@ -110,7 +110,7 @@ osm ns-create --ns_name ran --nsd_name ran_nsd --vim_account <vim_name>
 ```
 
 > ns-create will instantiate the 5g-ran network service use
-"vim_name" thats added to osm.
+> "vim_name" thats added to osm.
 
 ## Verifying the services
 
@@ -118,20 +118,20 @@ osm ns-create --ns_name ran --nsd_name ran_nsd --vim_account <vim_name>
 osm ns-list
 ```
 
->Will display the ns-created with ns-id, with status active and configured
-which means the service is up along with its day1 operations.
+> Will display the ns-created with ns-id, with status active and configured
+> which means the service is up along with its day1 operations.
 
 ```bash
 osm ns-show
 ```
 
->Will show detailed information of the network service.
+> Will show detailed information of the network service.
 
 ```bash
 microk8s kubectl get all –n ran-kdu-<ns-id>
 ```
 
->will dispaly 2 components deployed from bundle in vnfd.
+> will dispaly 2 components deployed from bundle in vnfd.
 
 ## 5g-ran day2 operation
 

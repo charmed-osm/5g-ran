@@ -29,8 +29,8 @@ images for ran-emulator and UE app.
 
 Consists of 2 docker files
 
-* ran
-* ue_app
+- ran
+- ue_app
 
 ## Prerequisites
 
@@ -61,10 +61,10 @@ docker push localhost:32000/ue:1.0
 
 ## Exposed Ports
 
-----------------------------------------------------------
-|     NF       |   Exposed Ports  | Dependencies         |
-----------------------------------------------------------
-|   ran        |   2152,8081,9487 |      NA              |
-----------------------------------------------------------
-|   ue_app     |        22        |      NA              |
-----------------------------------------------------------
+---
+
+## | NF | Exposed Ports | Dependencies |
+
+## | ran | 2152,8081,9487 | NA |
+
+## | ue_app | 22 | NA |

@@ -61,7 +61,7 @@ def _make_pod_command() -> List:
     ssh_run = [
         "/bin/bash",
         "-ec",
-        "while :; do service ssh restart; sleep 5 ; done",
+        "while :; do service ssh restart; sleep 5 ; done",  # Why restarting the service every 5 seconds? I would replace it by reload, to avoid restarting all the service.
     ]
     return ssh_run
 

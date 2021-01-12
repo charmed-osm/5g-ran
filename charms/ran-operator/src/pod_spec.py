@@ -174,7 +174,7 @@ def _make_pod_podannotations() -> Dict[str, Any]:
         "annotations": {
             "k8s.v1.cni.cncf.io/networks": '[\n{\n"name" : "internet-network",'
             '\n"interface": "eth1",\n"ips": []\n}\n]'
-        }
+        }  # IPs have been totally removed? is it okay like this?
     }
 
     return annot

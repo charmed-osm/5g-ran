@@ -32,7 +32,7 @@ vnfd-catalog:
           # At least one VDU need to be specified
           kdu:
               - name: ran-kdu
-                juju-bundle: bundle.yaml
+                juju-bundle: bundle.yaml  # Point to the charmstore
                 kdu-configuration:
                     initial-config-primitive:
                         - name: config-gnb
