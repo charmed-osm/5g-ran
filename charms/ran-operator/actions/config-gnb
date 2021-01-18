@@ -37,9 +37,6 @@ gnbport=`action-get gnb-port`
 ngapinterface=`action-get ngap-interface`
 upfip=`action-get upf-ip`
 pdninterface=`action-get pdn-interface`
-dbip=`action-get db-ip`
-dbport=`action-get db-port`
-dbname=`action-get db-name`
 
 
 curl --location --request POST 'http://localhost:8081/configread' \
@@ -81,11 +78,6 @@ curl --location --request POST 'http://localhost:8081/configread' \
         },
         \"pdnconfig\":{
                 \"pdninterface\" : \"$pdninterface\"
-        },
-	\"dbconfig\":{
-                \"dbip\" : \"$dbip\",
-                \"dbport\" : \"$dbport\",
-                \"dbname\" : \"$dbname\"
         }
 }
 "

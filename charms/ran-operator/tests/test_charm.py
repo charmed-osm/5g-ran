@@ -41,7 +41,7 @@ class TestCharm(unittest.TestCase):
 
     def test_config_changed(self) -> NoReturn:
         """Test installation without any relation."""
-        self.harness.charm.on.start.emit()
+        self.harness.charm.on.config_changed.emit()
         ipam_body = {
             "type": "host-local",
             "subnet": "60.60.0.0/16",

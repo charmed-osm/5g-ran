@@ -47,24 +47,18 @@ To build images of all the 5G RAN Components,
 ```bash
 cd ..
 ./build_docker_images.sh
-
 ```
 
 To push the built images to registry,
 
 ```bash
-
 docker push localhost:32000/ran:1.0
 docker push localhost:32000/ue:1.0
-
 ```
 
 ## Exposed Ports
 
-----------------------------------------------------------
-|     NF       |   Exposed Ports  | Dependencies         |
-----------------------------------------------------------
-|   ran        |   2152,8081,9487 |      NA              |
-----------------------------------------------------------
-|   ue_app     |        22        |      NA              |
-----------------------------------------------------------
+| NF     | Exposed Ports  | Dependencies |
+| ------ | -------------- | ------------ |
+| ran    | 2152,8081,9487 | NA           |
+| ue_app | 22             | NA           |

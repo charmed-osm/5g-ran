@@ -23,10 +23,10 @@ description: 5g-ran Bundle
 bundle: kubernetes
 applications:
   ran:
-    charm: 'cs:~tataelxsi-charmers/ran'
+    charm: "cs:~tataelxsi-charmers/ran"
     scale: 1
   ue:
-    charm: 'cs:~tataelxsi-charmers/ue'
+    charm: "cs:~tataelxsi-charmers/ue"
     scale: 1
 relations:
   - - ue:ran

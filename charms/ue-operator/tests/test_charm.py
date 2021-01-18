@@ -40,7 +40,7 @@ class TestCharm(unittest.TestCase):
 
     def test_on_start_without_relations(self) -> NoReturn:
         """Test installation without any relation."""
-        self.harness.charm.on.start.emit()
+        self.harness.charm.on.config_changed.emit()
 
         # Verifying status
         self.assertIsInstance(self.harness.charm.unit.status, BlockedStatus)
@@ -68,6 +68,10 @@ class TestCharm(unittest.TestCase):
                             "protocol": "TCP",
                         },
                     ],
+                    "envConfig": {
+                        "ALLOW_ANONYMOUS_LOGIN": "yes",
+                        "RELATION": "ran",
+                    },
                     "command": [
                         "/bin/bash",
                         "-ec",
@@ -91,9 +95,7 @@ class TestCharm(unittest.TestCase):
         self.assertIsNone(self.harness.charm.state.ran_host)
         ran_relation_id = self.harness.add_relation("ran", "ran")
         self.harness.add_relation_unit(ran_relation_id, "ran/0")
-        self.harness.update_relation_data(
-            ran_relation_id, "ran", {"hostname": "ran"}
-        )
+        self.harness.update_relation_data(ran_relation_id, "ran", {"hostname": "ran"})
 
         # Checking if nrf data is stored
         self.assertEqual(self.harness.charm.state.ran_host, "ran")

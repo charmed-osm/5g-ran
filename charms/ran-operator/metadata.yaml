@@ -22,24 +22,24 @@
 name: ran
 summary: Ran deploys the RAN as a microk8s pod
 maintainers:
-    - Tata Elxsi <canonical@tataelxsi.onmicrosoft.com>
+  - Tata Elxsi <canonical@tataelxsi.onmicrosoft.com>
 description: |
-    Ran deploys the Tata Elxsi developed 5G RAN Emulator,
-    as a microk8s based pod.
-    5g data plane and control plane communication between CORE
-    and UE happens through Radio Access Network(RAN)
+  Ran deploys the Tata Elxsi developed 5G RAN Emulator,
+  as a microk8s based pod.
+  5g data plane and control plane communication between CORE
+  and UE happens through Radio Access Network(RAN)
 tags:
-    - 5g-ran
+  - 5g-ran
 series:
-    - kubernetes
+  - kubernetes
 min-juju-version: 2.8.2
 deployment:
-    type: stateless
-    service: loadbalancer
+  type: stateless
+  service: loadbalancer
 resources:
-    image:
-        type: oci-image
-        description: docker image for RAN
+  image:
+    type: oci-image
+    description: docker image for RAN
 provides:
-    ran:
-        interface: ran
+  ran:
+    interface: ran

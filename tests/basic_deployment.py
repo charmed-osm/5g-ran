@@ -82,7 +82,6 @@ class BasicDeployment(unittest.TestCase):
             },
             "upfconfig": {"upfip": "10.45.28.51"},
             "pdnconfig": {"pdninterface": "eth1"},
-            "dbconfig": {"dbip": "10.45.28.24", "dbport": "27017", "dbname": "free5gc"},
         }
         result = requests.post(url=ENDPOINT, json=data)
         if result.status_code == 200:

@@ -51,42 +51,43 @@ juju deploy cs:~tata-charmers/ran
 
 a. Build using the following command
 
-   ```bash
-   charmcraft build
-   ```
+```bash
+charmcraft build
+```
 
 b. Deploy using the following command
 
-   ```bash
-   sudo juju deploy ran.charm
-   ```
+```bash
+juju deploy ./ran.charm
+```
 
 ## Developing
 
 To test config-gnb action,run the following command
 
-COMMAND : sudo juju run-action ran/< UNIT-ID > config-gnb amfip=<'amf-ip'> dbip=<'dbip'>  upfip=<'upf-ip'>
+COMMAND : sudo juju run-action ran/< UNIT-ID > config-gnb amfip=<'amf-ip'>
+upfip=<'upf-ip'>
 
 The above ips are obtained from Core deployment
 
 To check the status and output of the action ,use the following command
 
 COMMAND:
-sudo juju show-action-status < ACTION-ID >
-sudo juju show-action-output < ACTION-ID >
+juju show-action-status < ACTION-ID >
+juju show-action-output < ACTION-ID >
 
-Similarly other actions can be trigerred. 
+Similarly other actions can be trigerred.
 
 Commands to create and activate a virtualenv with the development
 requirements, use the following command:
 
-   virtualenv -p python3 venv
-   source venv/bin/activate
-   pip install -r requirements-dev.txt
+virtualenv -p python3 venv
+source venv/bin/activate
+pip install -r requirements-dev.txt
 
 ## Testing
 
 The Python operator framework includes a very nice harness for testing
 operator behaviour without full deployment. Just `run_tests`:
 
-   ./run_tests
+./run_tests

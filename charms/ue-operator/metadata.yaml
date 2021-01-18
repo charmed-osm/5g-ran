@@ -22,20 +22,20 @@
 name: ue
 summary: uecharm deploys the UE application as a microk8s pod
 maintainers:
-    - Tata Elxsi <canonical@tataelxsi.onmicrosoft.com>
+  - Tata Elxsi <canonical@tataelxsi.onmicrosoft.com>
 description: |
-    UE Charm deploys the Tata Elxsi developed UE application generator,
-    as a microk8s based pod.
-    Data traffic is generated in UE pod and send to/received from the
-    CORE through RAN pod.
+  UE Charm deploys the Tata Elxsi developed UE application generator,
+  as a microk8s based pod.
+  Data traffic is generated in UE pod and send to/received from the
+  CORE through RAN pod.
 tags:
-    - ue
+  - ue
 series:
-    - kubernetes
+  - kubernetes
 resources:
-    image:
-        type: oci-image
-        description: docker image for UE
+  image:
+    type: oci-image
+    description: docker image for UE
 requires:
-    ran:
-        interface: ran
+  ran:
+    interface: ran

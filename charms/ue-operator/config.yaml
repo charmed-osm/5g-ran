@@ -20,8 +20,8 @@
 ##
 ---
 options:
-    ssh_port:
-        type: int
-        description: |
-            ssh_port is used for communication between ran and core
-        default: 22
+  ssh_port:
+    type: int
+    description: |
+      ssh_port is used for communication between ran and core
+    default: 22

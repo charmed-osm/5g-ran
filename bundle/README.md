@@ -38,38 +38,38 @@ Contains charm folder consisting of 2 k8s charm applications
 
 a. Install Microk8s using the following commands,
 
-   ```bash
-   sudo snap install microk8s --classic --channel 1.19/stable
-   sudo usermod -a -G microk8s `whoami`
-   newgrp microk8s
-   microk8s.status --wait-ready
-   ```
+```bash
+sudo snap install microk8s --classic --channel 1.19/stable
+sudo usermod -a -G microk8s `whoami`
+newgrp microk8s
+microk8s.status --wait-ready
+```
 
-   The ouput "microk8s is running" signifies that Microk8s is successfully installed.
+The ouput "microk8s is running" signifies that Microk8s is successfully installed.
 
 b. Enable the following required addons for Microk8s to deploy 5G Ran
 
-   ```bash
-   microk8s.enable storage dns
-   microk8s.enable multus
-   microk8s.enable rbac
-   ```
+```bash
+microk8s.enable storage dns
+microk8s.enable multus
+microk8s.enable rbac
+```
 
 #### B. Install Juju
 
 a. Install Juju with the following commands,
 
-   ```bash
-   sudo snap install juju --classic --channel 2.8/stable
-   juju bootstrap microk8s
-   ```
+```bash
+sudo snap install juju --classic --channel 2.8/stable
+juju bootstrap microk8s
+```
 
 ### Deploy
 
 To deploy 5G RAN Emulator from Charmstore, use the following command
 
 ```bash
-juju deploy cs:~tata-charmers/ran
+juju deploy cs:~tataelxsi-charmers/ran-5g
 ```
 
 #### Deploy from local repository
@@ -78,47 +78,48 @@ To deploy 5G Ran from local repository, follow the steps below,
 
 a. Clone the 5g-ran repository
 
-   ```bash
-   git clone https://github.com/charmed-osm/5g-ran
-   cd 5g-ran/
-   ```
+```bash
+git clone https://github.com/charmed-osm/5g-ran
+cd 5g-ran/
+```
 
 b. Enable Microk8s registry for storing images
 
-   ```bash
-   microk8s.enable registry
-   ```
+```bash
+microk8s.enable registry
+```
 
 c. Build and push 5G Ran images to registry
 
-   ```bash
-   ./build_docker_images.sh
-   docker push localhost:32000/ran:1.0
-   docker push localhost:32000/ue:1.0
-   ```
+```bash
+./build_docker_images.sh
+docker push localhost:32000/ran:1.0
+docker push localhost:32000/ue:1.0
+```
 
 d. Execute the following script to build all the 5G Ran charms using Charmcraft,
 
-   ```bash
-   ./build_charms.sh
-   ```
+```bash
+./build_charms.sh
+```
 
 e. Create a model in Juju and deploy 5G Ran,
 
-   ```bash
-   juju add-model 5g-Ran
-   juju deploy ./bundle_local.yaml
-   ```
+```bash
+juju add-model 5g-Ran
+juju deploy ./bundle_local.yaml
+```
 
 ### Integration
 
 5G Ran exposes its following services in order to facilitate control plane and
- data plane interactions with CORE,
-   * TCP Service - For Control Plane User Registration and Attach Scenario.
-   * UDP Service - For Data Transfer scneario
+data plane interactions with CORE,
+
+* TCP Service - For Control Plane User Registration and Attach Scenario.
+* UDP Service - For Data Transfer scneario
 
 In order to achieve this, 5G Ran needs 2 Loadbalancer services to be exposed
- and published. This is done using,
+and published. This is done using,
 
 ```bash
 microk8s.enable metallb

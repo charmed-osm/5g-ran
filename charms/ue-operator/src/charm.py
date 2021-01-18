@@ -53,7 +53,6 @@ class UeCharm(CharmBase):
         self.image = OCIImageResource(self, "image")
 
         # Registering regular events
-        self.framework.observe(self.on.start, self.configure_pod)
         self.framework.observe(self.on.config_changed, self.configure_pod)
 
         # Registering required relation changed events
@@ -136,6 +135,7 @@ class UeCharm(CharmBase):
             pod_spec = make_pod_spec(
                 image_info,
                 self.model.config,
+                self.relation_state,
                 self.model.app.name,
             )
         except ValueError as exc:

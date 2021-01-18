@@ -42,6 +42,21 @@ def _make_pod_ports(config: Dict[str, Any]) -> Dict[str, Any]:
     ]
 
 
+def _make_pod_envconfig(relation_state: Dict[str, Any]) -> Dict[str, Any]:
+    """Generate pod environment configuration.
+
+    Args:
+        relation_state (Dict[str, Any]): relation state information.
+    Returns:
+        Dict[str, Any]: pod environment configuration.
+    """
+    return {
+        # General configuration
+        "ALLOW_ANONYMOUS_LOGIN": "yes",
+        "RELATION": relation_state["ran_host"],
+    }
+
+
 def _make_pod_privilege() -> Dict[str, Any]:
     """Generate pod privileges.
 
@@ -92,9 +107,20 @@ def _validate_config(config: Dict[str, Any]) -> None:
         raise ValueError("Invalid ssh port")
 
 
+def _validate_relation_state(relation_state: Dict[str, Any]) -> None:
+    """Validate relation data.
+
+    Args:
+        relation_state (Dict[str, Any]): relation information.
+    """
+    if not relation_state.get("ran_host"):
+        raise ValueError("Host name is empty")
+
+
 def make_pod_spec(
     image_info: Dict[str, str],
     config: Dict[str, str],
+    relation_state: Dict[str, Any],
     app_name: str,
 ) -> Dict[str, Any]:
     """Generate the pod spec information.
@@ -114,8 +140,10 @@ def make_pod_spec(
         return None
 
     _validate_config(config)
+    _validate_relation_state(relation_state)
     ports = _make_pod_ports(config)
     cmd = _make_pod_command()
+    env_config = _make_pod_envconfig(relation_state)
     kubernetes = _make_pod_privilege()
     podannotations = _make_pod_podannotations()
     return {
@@ -126,6 +154,7 @@ def make_pod_spec(
                 "imageDetails": image_info,
                 "imagePullPolicy": "Always",
                 "ports": ports,
+                "envConfig": env_config,
                 "command": cmd,
                 "kubernetes": kubernetes,
             }

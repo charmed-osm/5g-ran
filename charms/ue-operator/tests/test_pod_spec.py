@@ -43,6 +43,17 @@ class TestPodSpec(unittest.TestCase):
         pod_ports = pod_spec._make_pod_ports(dictport)
         self.assertListEqual(expected_result, pod_ports)
 
+    def test_make_pod_envconfig(self) -> NoReturn:
+        """Teting make pod envconfig configuration."""
+
+        expected_result = {
+            "ALLOW_ANONYMOUS_LOGIN": "yes",
+            "RELATION": "ran",
+        }
+        relation_state = {"ran_host": "ran"}
+        pod_envconfig = pod_spec._make_pod_envconfig(relation_state)
+        self.assertDictEqual(expected_result, pod_envconfig)
+
     def test_make_pod_privilege(self) -> NoReturn:
         """Teting make pod privilege."""
         expected_result = {
@@ -78,15 +89,22 @@ class TestPodSpec(unittest.TestCase):
         with self.assertRaises(ValueError):
             pod_spec._validate_config(config)
 
+    def test_validate_relation(self) -> NoReturn:
+        """Testing relation data scenario."""
+        relation_state = {"ran_host": ""}
+        with self.assertRaises(ValueError):
+            pod_spec._validate_relation_state(relation_state)
+
     def test_make_pod_spec(self) -> NoReturn:
         """Testing make pod spec."""
         image_info = {"upstream-source": "localhost:32000/ue:1.0"}
         config = {
             "ssh_port": 9999,
         }
+        relation_state = {"ran_host": "ran"}
         app_name = "udpnew"
         with self.assertRaises(ValueError):
-            pod_spec.make_pod_spec(image_info, config, app_name)
+            pod_spec.make_pod_spec(image_info, config, relation_state, app_name)
 
 
 if __name__ == "__main__":
