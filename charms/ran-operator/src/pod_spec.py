@@ -146,7 +146,7 @@ def _make_pod_resource(config: Dict[str, Any]) -> Dict[str, Any]:
         "cniVersion": "0.3.1",
         "name": "internet-network",
         "type": "macvlan",
-        "master": "ens3",
+        "master": config["master_interface"],
         "mode": "bridge",
         "ipam": ipam_body,
     }
@@ -217,9 +217,12 @@ def _validate_config(config: Dict[str, Any]):
     pdn_ip_range_start = config.get("pdn_ip_range_start")
     pdn_ip_range_end = config.get("pdn_ip_range_end")
     pdn_gateway_ip = config.get("pdn_gateway_ip")
+    master_interface = config.get("master_interface")
     for pdn_conf in pdn_subnet, pdn_ip_range_start, pdn_ip_range_end, pdn_gateway_ip:
         if not IP(pdn_conf):
             raise ValueError("Value error in pdn ip configuration")
+    if not str(master_interface):
+        raise ValueError("interface name error")
 
 
 def make_pod_spec(

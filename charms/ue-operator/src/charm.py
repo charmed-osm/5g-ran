@@ -60,9 +60,9 @@ class UeCharm(CharmBase):
             self.on.ran_relation_changed, self._on_ran_relation_changed
         )
 
-        # Registering required relation departed events
+        # Registering required relation broken events
         self.framework.observe(
-            self.on.ran_relation_departed, self._on_ran_relation_departed
+            self.on.ran_relation_broken, self._on_ran_relation_broken
         )
 
         # -- initialize states --
@@ -81,7 +81,7 @@ class UeCharm(CharmBase):
             self.state.ran_host = ran_host
             self.configure_pod()
 
-    def _on_ran_relation_departed(self, _=None) -> NoReturn:
+    def _on_ran_relation_broken(self, _=None) -> NoReturn:
         """Clears data from ran relation departed."""
         self.state.ran_host = None
         self.configure_pod()

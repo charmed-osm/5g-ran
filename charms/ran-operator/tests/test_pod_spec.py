@@ -117,6 +117,7 @@ class TestPodSpec(unittest.TestCase):
             "pdn_ip_range_start": "60.60.0.50",
             "pdn_ip_range_end": "60.60.0.250",
             "pdn_gateway_ip": "60.60.0.100",
+            "master_interface": "ens3",
         }
         pdn_subnet = "60.60.0.0/16"
         pdn_ip_range_start = "60.60.0.50"
@@ -130,11 +131,12 @@ class TestPodSpec(unittest.TestCase):
             "rangeEnd": pdn_ip_range_end,
             "gateway": pdn_gateway_ip,
         }
+        master_interface = "ens3"
         config_body = {
             "cniVersion": "0.3.1",
             "name": "internet-network",
             "type": "macvlan",
-            "master": "ens3",
+            "master": master_interface,
             "mode": "bridge",
             "ipam": ipam_body,
         }
@@ -192,6 +194,7 @@ class TestPodSpec(unittest.TestCase):
             "pdn_ip_range_start": "-60.60.0.50",
             "pdn_ip_range_end": "-60.60.0.250",
             "pdn_gateway_ip": "-60.60.0.100",
+            "master_interface": 234,
         }
         with self.assertRaises(ValueError):
             pod_spec._validate_config(config)
@@ -205,6 +208,7 @@ class TestPodSpec(unittest.TestCase):
             "pdn_ip_range_start": "-60.60.0.50",
             "pdn_ip_range_end": "-60.60.0.250",
             "pdn_gateway_ip": "-60.60.0.100",
+            "master_interface": 234,
         }
         model_name = "ran"
         app_name = "udpnew"

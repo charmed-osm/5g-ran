@@ -66,11 +66,25 @@ juju bootstrap microk8s
 
 ### Deploy
 
-To deploy 5G RAN Emulator from Charmstore, use the following command
+To deploy 5G RAN Emulator from Charmstore, follow the steps below,
+
+a. Deploy ran applications
 
 ```bash
 juju deploy cs:~tataelxsi-charmers/ran-5g
 ```
+
+b. Configuring interface
+
+Update master_interface field to your server's main interface name with the
+following command:
+
+```bash
+juju config ran master_interface="<interface_name>"
+```
+
+where interface_name stands for server's main interface name where ran is
+deployed
 
 #### Deploy from local repository
 
@@ -109,6 +123,18 @@ e. Create a model in Juju and deploy 5G Ran,
 juju add-model 5g-Ran
 juju deploy ./bundle_local.yaml
 ```
+
+f. Configuring interface
+
+Update master_interface field to your server's main interface name with the
+following command:
+
+```bash
+juju config ran master_interface="<interface_name>"
+```
+
+where interface_name stands for server's main interface name where ran is
+deployed
 
 ### Integration
 

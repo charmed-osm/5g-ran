@@ -31,6 +31,11 @@ options:
       an inerface will be created in ran pod with pdn_subnet which will be used
       for data plane communication between ue, ran and core components
     default: "60.60.0.0/16"
+  master_interface:
+    type: string
+    description: |
+      master interface name for multus config
+    default: "ens3"
   pdn_ip_range_start:
     type: string
     description: |
