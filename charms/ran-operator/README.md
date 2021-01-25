@@ -58,7 +58,7 @@ charmcraft build
 b. Deploy using the following command
 
 ```bash
-juju deploy ./ran.charm
+juju deploy ./ran.charm --resource image=tataelxsi5g/ran:4.0
 ```
 
 ## Developing

@@ -40,6 +40,7 @@ resources:
   image:
     type: oci-image
     description: docker image for RAN
+    upstream-source: tataelxsi5g/ran:4.0
 provides:
   ran:
     interface: ran
