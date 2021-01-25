@@ -132,9 +132,9 @@ microk8s kubectl get all –n ran-kdu-<ns-id>
 ```bash
 osm ns-action ran --vnf_name 1 --kdu_name ran-kdu --action_name config-ue
  --params '{application-name: ran,msin: "00007487",mcc: 208,mnc: 93,
-routing-indicator: "0fff",k: 5463,opc: 451011,ue-mgmt-ip: "10.1.135.52",
+routing-indicator: "0fff",k: 5463,opc: 451011,ue-mgmt-ip: "<UE_eth0_IP>",
 pdu-session-id: 1,data-network-name: internet,
-ue-pdu-macaddress: "8e:14:95:4b:b0:29",sst: 1,sd: "010203",
+ue-pdu-macaddress: "<UE_eth1_mac>",sst: 1,sd: "010203",
 protection-scheme : "" }'
 ```
 
@@ -147,5 +147,7 @@ where
   msin: "00007487", should match digits of imsi number 20893*00007487* added in core.
   mcc: 208, should match the digits of imsi number *208*9300007487 added in core.
   mnc: 93, should match the digits of imsi number 208*93*00007487 added in core.
-  ue-mgmt-ip: "10.1.135.5", ue managemet ip is UE pod's eth0 interface ip.
-  ue-pdu-macaddress: "8e:14:95:4b:b0:29", ue pod's eth1 interface mac address
+  ue-mgmt-ip: "<UE_eth0_IP>", ue managemet ip is UE pod's eth0 interface ip.
+  ue-pdu-macaddress: "<UE_eth1_mac>", ue pod's eth1 interface mac address
+
+Note: [Test 5G-Scenarios](../README.md)

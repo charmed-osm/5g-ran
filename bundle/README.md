@@ -53,7 +53,11 @@ b. Enable the following required addons for Microk8s to deploy 5G Ran
 microk8s.enable storage dns
 microk8s.enable multus
 microk8s.enable rbac
+microk8s.enable metallb
 ```
+
+NOTE: 5G RAN requires 2 loadbalancer IP addresses mandatorily. So allocate 2
+IP addresses while enabling metallb.
 
 #### B. Install Juju
 
@@ -76,8 +80,8 @@ juju deploy cs:~tataelxsi-charmers/ran-5g
 
 b. Configuring interface
 
-Update master_interface field to your server's main interface name with the
-following command:
+For the deployment to get completed successfully, update master_interface field
+to your server's main interface name with the following command,
 
 ```bash
 juju config ran master_interface="<interface_name>"
@@ -126,8 +130,8 @@ juju deploy ./bundle_local.yaml
 
 f. Configuring interface
 
-Update master_interface field to your server's main interface name with the
-following command:
+For the deployment to get completed successfully, update master_interface field
+to your server's main interface name with the following command,
 
 ```bash
 juju config ran master_interface="<interface_name>"
@@ -151,12 +155,67 @@ and published. This is done using,
 microk8s.enable metallb
 ```
 
+#### Juju Actions:
+
+Note: Make sure 5G-Core(https://github.com/charmed-osm/5g-core) is deployed and
+5G-core actions are done before performing the following actions in 5G-RAN,
+
+a. Action "config-gnb" is used to configure the gNB with the operator specific
+parameters such as PLMN, Tracking area code, Global gNB Id, and the core
+interfacing parameters such as AMF IP, UPF IP etc.,
+
+```bash
+juju run-action ran/<unit_id> config-gnb amf-ip='<AMF_LB_IP>' upf-ip='<UPF_LB_IP>'
+```
+
+where unit_id is the Unit number of the respective unit,
+AMF_LB_IP and UPF_LB_IP are the respective loadbalancer IP addresses of
+5G-Core's AMF and UPF applications.
+
+b. Action "connect-amf" is used to initiate a SCTP connection with the AMF.
+On a result of this action the core and RAN negotiate the parameters and NGAP
+connection is established between RAN and Core.,
+
+```bash
+juju run-action ran/<unit_id> connect-amf
+```
+
+where unit_id is the Unit number of the respective unit,
+
+c. Action "config-ue" which will be used to set UE’s context in RAN,
+
+```bash
+juju run-action ran/<unit_id> config-ue ue-mgmt-ip='<UE_eth0_IP>' ue-pdu-macaddress='<UE_eth1_mac>'
+```
+
+where unit_id is the Unit number of the respective unit,
+UE_eth0_IP is the IP address of UE application's eth0 interface and
+UE_eth1_mac is the mac address of UE application's eth1 interface.
+
+After executing each action, an ID will be generated like below,
+Action queued with id: "ID"
+This ID can be used to check the action status using the following command,
+
+```bash
+juju show-action-output <ID>
+```
+
+Check for the status of the action in the output which should be "completed".
+
+#### Actions Verification:
+
+"config-gnb", "connect-amf" and "config-ue" actions can be verified in RAN
+application pod in /var/log/free5gc.log file. The IP addresses of Core set,
+the SCTP connection successful message and the UE application's IP and MAC
+address set can be verified in this log file.
+
 ### 5G Scenarios
 
 #### 5G User Registration
 
-After 5G-Core(https://github.com/charmed-osm/5g-core) and 5G-RAN are deployed and configured, the user registration can
-be triggered through the following rest API call with POST method,
+After 5G-Core(https://github.com/charmed-osm/5g-core) and 5G-RAN are deployed
+and actions are completed, the user registration can be triggered through the
+following rest API call with POST method,
 
 ```bash
 http://ran-loadbalancerip:8081/attachtrigger/1
@@ -204,8 +263,8 @@ nc -u -l -p <any unused port>
 Voice traffic flow can be tested once
 5G-Core(https://github.com/charmed-osm/5g-core),
 5G-RAN and 5G-IMS(https://github.com/charmed-osm/5g-ims) are deployed
-and configured. To test voice traffic flows, a SIP client called PJSIP is
-already installed in the UE application. Follow the below steps,
+and actions are completed. To test voice traffic flows, a SIP client called
+PJSIP is already installed in the UE application. Follow the below steps,
 
 a. Traverse to /pjproject directory in the UE pod.
 
