@@ -65,18 +65,11 @@ juju deploy ./ran.charm --resource image=tataelxsi5g/ran:4.0
 
 To test config-gnb action,run the following command
 
-COMMAND : sudo juju run-action ran/< UNIT-ID > config-gnb amfip=<'amf-ip'>
-upfip=<'upf-ip'>
+```bash
+juju run-action ran/0 config-gnb amfip=<amf-ip> upfip=<'upf-ip'> --wait
+```
 
 The above ips are obtained from Core deployment
-
-To check the status and output of the action ,use the following command
-
-COMMAND:
-juju show-action-status < ACTION-ID >
-juju show-action-output < ACTION-ID >
-
-Similarly other actions can be trigerred.
 
 Commands to create and activate a virtualenv with the development
 requirements, use the following command:

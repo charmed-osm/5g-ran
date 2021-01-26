@@ -75,6 +75,7 @@ To deploy 5G RAN Emulator from Charmstore, follow the steps below,
 a. Deploy ran applications
 
 ```bash
+juju add-model ran
 juju deploy cs:~tataelxsi-charmers/ran-5g
 ```
 
@@ -124,7 +125,7 @@ d. Execute the following script to build all the 5G Ran charms using Charmcraft,
 e. Create a model in Juju and deploy 5G Ran,
 
 ```bash
-juju add-model 5g-Ran
+juju add-model ran
 juju deploy ./bundle_local.yaml
 ```
 
@@ -165,7 +166,7 @@ parameters such as PLMN, Tracking area code, Global gNB Id, and the core
 interfacing parameters such as AMF IP, UPF IP etc.,
 
 ```bash
-juju run-action ran/<unit_id> config-gnb amf-ip='<AMF_LB_IP>' upf-ip='<UPF_LB_IP>'
+juju run-action ran/0 config-gnb amf-ip='<AMF_LB_IP>' upf-ip='<UPF_LB_IP>' --wait
 ```
 
 where unit_id is the Unit number of the respective unit,
@@ -177,7 +178,7 @@ On a result of this action the core and RAN negotiate the parameters and NGAP
 connection is established between RAN and Core.,
 
 ```bash
-juju run-action ran/<unit_id> connect-amf
+juju run-action ran/0 connect-amf --wait
 ```
 
 where unit_id is the Unit number of the respective unit,
@@ -185,20 +186,12 @@ where unit_id is the Unit number of the respective unit,
 c. Action "config-ue" which will be used to set UE’s context in RAN,
 
 ```bash
-juju run-action ran/<unit_id> config-ue ue-mgmt-ip='<UE_eth0_IP>' ue-pdu-macaddress='<UE_eth1_mac>'
+juju run-action ran/0 config-ue ue-mgmt-ip='<UE_eth0_IP>' ue-pdu-macaddress='<UE_eth1_mac>' --wait
 ```
 
 where unit_id is the Unit number of the respective unit,
 UE_eth0_IP is the IP address of UE application's eth0 interface and
 UE_eth1_mac is the mac address of UE application's eth1 interface.
-
-After executing each action, an ID will be generated like below,
-Action queued with id: "ID"
-This ID can be used to check the action status using the following command,
-
-```bash
-juju show-action-output <ID>
-```
 
 Check for the status of the action in the output which should be "completed".
 

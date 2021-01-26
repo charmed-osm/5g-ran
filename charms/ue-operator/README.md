@@ -60,7 +60,7 @@ charmcraft build
 b. Deploy using the following command
 
 ```bash
-sudo juju deploy ./ue.charm --resource image=tataelxsi5g/ue:4.0
+juju deploy ./ue.charm --resource image=tataelxsi5g/ue:4.0
 ```
 
 ## Developing

@@ -3,4 +3,4 @@ venv
 .tox
 .vscode
 *build
-.charm
+*.charm
